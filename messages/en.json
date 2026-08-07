@@ -1,0 +1,241 @@
+{
+  "common": {
+    "siteName": "Korean Reference",
+    "siteShort": "KR",
+    "tagline": "Understand Korean forms, sounds, and meanings.",
+    "description": "A multilingual reference for sound changes, conjugation, Hanja vocabulary, idioms, and practical examples.",
+    "search": "Search",
+    "language": "Language",
+    "selectLanguage": "Select language",
+    "openMenu": "Open navigation menu",
+    "mainNav": "Main navigation",
+    "searchEntries": "Search Korean entries",
+    "searchPlaceholder": "Search Korean, Hanja, or meaning…",
+    "searchComingSoon": "Search and autocomplete will be enabled in a later development phase.",
+    "comingSoon": "This section will be implemented in a later phase."
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "soundChange": "Sound Change",
+    "conjugation": "Conjugation",
+    "hanja": "Hanja",
+    "idioms": "Idioms",
+    "about": "About"
+  },
+  "home": {
+    "browseModules": "Browse modules",
+    "browseModulesDescription": "Jump into the four core reference areas.",
+    "multilingualPreview": "Multilingual preview",
+    "multilingualPreviewDescription": "Sample mixed-script typography for Korean, Chinese, Japanese, and English.",
+    "sampleGada": "가다 · 去 · 行く",
+    "sampleGadaDescription": "English: to go\n中文：走；前往\n日本語：行く",
+    "sampleSchool": "학교 · 學校",
+    "sampleSchoolDescription": "Hanja vocabulary with pronunciation and meaning notes.",
+    "sampleIdiom": "식은 죽 먹기",
+    "sampleIdiomDescription": "Literal: eat cold porridge\nActual: very easy"
+  },
+  "modules": {
+    "sound-change": {
+      "title": "Sound Change",
+      "description": "Browse liaison, nasalization, and other pronunciation rules."
+    },
+    "conjugation": {
+      "title": "Conjugation",
+      "description": "Look up verb and adjective endings with step-by-step notes."
+    },
+    "hanja": {
+      "title": "Hanja",
+      "description": "Connect Korean words to their Chinese-character origins."
+    },
+    "idioms": {
+      "title": "Idioms",
+      "description": "Explore fixed expressions, usage, and example sentences."
+    }
+  },
+  "pages": {
+    "search": {
+      "title": "Search",
+      "description": "Cross-module search for entries, sound rules, conjugation, Hanja, and idioms."
+    },
+    "soundChange": {
+      "title": "Sound Change",
+      "description": "Browse Korean pronunciation rules such as liaison, nasalization, and final consonant changes."
+    },
+    "conjugation": {
+      "title": "Conjugation",
+      "description": "Look up verb and adjective endings with clear steps and irregular notes."
+    },
+    "hanja": {
+      "title": "Hanja",
+      "description": "Explore Sino-Korean vocabulary, character breakdowns, and single-character lookups."
+    },
+    "idioms": {
+      "title": "Idioms",
+      "description": "Browse fixed expressions with literal meaning, actual meaning, and usage notes."
+    },
+    "about": {
+      "title": "About",
+      "description": "Korean Reference helps learners understand pronunciation, conjugation, Hanja, and idioms.",
+      "introEn": "Korean Reference is a multilingual reference website for sound changes, conjugation, Hanja vocabulary, idioms, and practical examples.",
+      "introZh": "面向中、英、日母语学习者的韩语音变、用言变形、汉字词与习语查询网站。",
+      "introJa": "中国語・英語・日本語話者向けの、韓国語の音変化、用言活用、漢字語、慣用表現を調べられるリファレンスサイト。"
+    }
+  },
+  "content": {
+    "fallbackToEnglish": "English content shown because this translation is not yet available.",
+    "contentInProgress": "Content for this language is not yet available.",
+    "demoSectionTitle": "Content fallback demo",
+    "demoSectionDescription": "Mock knowledge content below demonstrates translation fallback behavior.",
+    "demoFallbackLabel": "Sample note (Japanese missing → English fallback)",
+    "demoMissingLabel": "Sample note (all translations missing)"
+  },
+  "data": {
+    "featuredEntries": "Featured entries",
+    "featuredEntriesDescription": "Published sample entries from the mock dataset.",
+    "noPublishedItems": "No published items to display.",
+    "viewDetails": "View",
+    "literalMeaning": "Literal meaning",
+    "actualMeaning": "Actual meaning",
+    "examples": "Examples",
+    "steps": "Conjugation steps",
+    "irregular": "Irregular",
+    "hanjaCharacters": "Character breakdown",
+    "hanjaSingleCharTitle": "Single-character lookup preview (人)",
+    "hanjaSingleCharDescription": "Published Hanja entries containing the character 人.",
+    "notes": "Notes",
+    "usageNotes": "Usage notes",
+    "conditions": "Conditions",
+    "exceptions": "Exceptions",
+    "explanation": "Explanation",
+    "categories": "Categories",
+    "register": "Register",
+    "formPresentPolite": "Present polite",
+    "formPastPolite": "Past polite",
+    "formPresentFormal": "Present formal",
+    "formPastFormal": "Past formal",
+    "formPresentInformal": "Present informal",
+    "formPropositive": "Propositive",
+    "result": "Result",
+    "stem": "Stem",
+    "notFound": "The requested item was not found or is not published."
+  },
+  "search": {
+    "initialTitle": "Search across all modules",
+    "initialDescription": "Enter a Korean headword, Hanja character, meaning, or conjugated form. Korean and Hanja queries work from one character; other scripts need at least two.",
+    "resultsFor": "{count, plural, one {# result} other {# results}} for \"{query}\"",
+    "loadingSuggestions": "Loading suggestions…",
+    "noResultsTitle": "No results found",
+    "noResultsDescription": "Nothing matched \"{query}\" in published content.",
+    "noResultsHintSpelling": "Check the spelling or try the dictionary form.",
+    "noResultsHintBaseForm": "Try the base verb or adjective form (e.g. 듣다 instead of 들어요).",
+    "noResultsHintBrowse": "Browse the four core modules below.",
+    "noResultsFeedbackPlaceholder": "Content suggestions and feedback will be available in a later phase.",
+    "groupEntries": "Entries",
+    "groupSoundChange": "Sound Changes",
+    "groupConjugation": "Conjugation",
+    "groupHanja": "Hanja",
+    "groupIdioms": "Idioms",
+    "browse": {
+      "sound-change": "Sound Change",
+      "conjugation": "Conjugation",
+      "hanja": "Hanja",
+      "idioms": "Idioms"
+    },
+    "match": {
+      "headword_exact": "Exact headword match",
+      "headword_prefix": "Headword prefix match",
+      "headword_partial": "Headword partial match",
+      "hanja_exact": "Exact Hanja match",
+      "hanja_partial": "Hanja partial match",
+      "definition_current_exact": "Exact meaning match",
+      "definition_current_partial": "Partial meaning match",
+      "definition_other_exact": "Exact meaning match (other language)",
+      "definition_other_partial": "Partial meaning match (other language)",
+      "conjugated_form_exact": "Exact conjugated form match",
+      "conjugated_form_partial": "Partial conjugated form match",
+      "title_exact": "Exact title match",
+      "title_prefix": "Title prefix match",
+      "title_partial": "Partial title match",
+      "keyword_partial": "Keyword match",
+      "romanization_exact": "Matched romanization",
+      "romanization_prefix": "Matched romanization prefix",
+      "romanization_alias_exact": "Matched romanization alias",
+      "romanization_alias_prefix": "Matched romanization alias prefix"
+    }
+  },
+  "moduleFilters": {
+    "search": "Search in this module",
+    "searchPlaceholder": "Korean, Hanja, romanization, or meaning…",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "character": "Character",
+    "partOfSpeech": "Part of speech",
+    "register": "Register",
+    "all": "All",
+    "resultCount": "{count} results",
+    "clearFilters": "Clear filters",
+    "noFilterResults": "No items match the current filters.",
+    "relatedRules": "Related rules",
+    "relatedEntries": "Related entries",
+    "relatedIdioms": "Similar expressions",
+    "relatedHanja": "Words sharing characters",
+    "linkedEntry": "Linked Korean entry",
+    "exampleWords": "Example words",
+    "usageContext": "Usage context",
+    "commonMistakes": "Common mistakes",
+    "conjugationNotRecorded": "This combination is not yet recorded in the dataset.",
+    "conjugationSelectPrompt": "Select a published entry and form to view an audited result.",
+    "conjugationReset": "Reset",
+    "conjugationEntry": "Dictionary form",
+    "conjugationForm": "Target form",
+    "conjugationAllEntries": "Choose an entry…",
+    "conjugationAllForms": "Choose a form…",
+    "hanjaTableWord": "Korean word",
+    "hanjaTableCharacter": "Hanja",
+    "hanjaTableReading": "Reading",
+    "hanjaTableMeaning": "Meaning",
+    "categories": {
+      "liaison": "Liaison",
+      "nasalization": "Nasalization",
+      "liquidization": "Liquidization",
+      "tensification": "Tensification",
+      "aspiration": "Aspiration",
+      "h_changes": "H changes",
+      "batchim": "Batchim",
+      "other": "Other"
+    },
+    "difficulties": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "registers": {
+      "formal": "Formal",
+      "neutral": "Neutral",
+      "informal": "Informal"
+    },
+    "idiomCategories": {
+      "daily": "Daily life",
+      "emotion": "Emotion",
+      "relationship": "Relationships",
+      "work-study": "Work & study",
+      "body": "Body",
+      "animal": "Animals",
+      "formal": "Formal",
+      "colloquial": "Colloquial"
+    },
+    "pos": {
+      "verb": "Verb",
+      "adjective": "Adjective",
+      "noun": "Noun",
+      "adverb": "Adverb",
+      "particle": "Particle",
+      "other": "Other"
+    }
+  },
+  "metadata": {
+    "title": "Korean Reference",
+    "description": "A multilingual Korean reference website for sound changes, conjugation, Hanja vocabulary, idioms, and practical examples."
+  }
+}

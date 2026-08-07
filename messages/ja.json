@@ -1,0 +1,241 @@
+{
+  "common": {
+    "siteName": "韓国語リファレンス",
+    "siteShort": "KR",
+    "tagline": "韓国語の発音・活用・意味をすばやく確認。",
+    "description": "音変化、活用、漢字語、慣用表現を調べられる多言語リファレンスサイト。",
+    "search": "検索",
+    "language": "言語",
+    "selectLanguage": "言語を選択",
+    "openMenu": "ナビゲーションメニューを開く",
+    "mainNav": "メインナビゲーション",
+    "searchEntries": "韓国語エントリを検索",
+    "searchPlaceholder": "韓国語、漢字、意味で検索…",
+    "searchComingSoon": "検索とオートコンプリートは今後の開発段階で有効になります。",
+    "comingSoon": "このセクションは今後の開発段階で実装されます。"
+  },
+  "nav": {
+    "home": "ホーム",
+    "search": "検索",
+    "soundChange": "音変化",
+    "conjugation": "活用",
+    "hanja": "漢字語",
+    "idioms": "慣用表現",
+    "about": "概要"
+  },
+  "home": {
+    "browseModules": "モジュールを見る",
+    "browseModulesDescription": "4つの主要リファレンス領域へ移動。",
+    "multilingualPreview": "多言語プレビュー",
+    "multilingualPreviewDescription": "韓国語、中国語、日本語、英語の混在タイポグラフィの例。",
+    "sampleGada": "가다 · 去 · 行く",
+    "sampleGadaDescription": "English: to go\n中文：走；前往\n日本語：行く",
+    "sampleSchool": "학교 · 學校",
+    "sampleSchoolDescription": "発音と意味の注釈付き漢字語の例。",
+    "sampleIdiom": "식은 죽 먹기",
+    "sampleIdiomDescription": "直訳：冷たい粥を食べる\n実際：非常に簡単"
+  },
+  "modules": {
+    "sound-change": {
+      "title": "音変化",
+      "description": "連音、鼻音化などの発音規則を閲覧。"
+    },
+    "conjugation": {
+      "title": "活用",
+      "description": "動詞・形容詞の語尾変化をステップ付きで確認。"
+    },
+    "hanja": {
+      "title": "漢字語",
+      "description": "韓国語と漢字語源の関係を調べる。"
+    },
+    "idioms": {
+      "title": "慣用表現",
+      "description": "慣用句、使用場面、例文を探索。"
+    }
+  },
+  "pages": {
+    "search": {
+      "title": "検索",
+      "description": "エントリ、音変化規則、活用、漢字語、慣用表現を横断検索。"
+    },
+    "soundChange": {
+      "title": "音変化",
+      "description": "連音、鼻音化、音節末子音などの発音規則を閲覧。"
+    },
+    "conjugation": {
+      "title": "活用",
+      "description": "動詞・形容詞の語尾変化と不規則活用の説明。"
+    },
+    "hanja": {
+      "title": "漢字語",
+      "description": "漢字語、逐字説明、一文字検索を探索。"
+    },
+    "idioms": {
+      "title": "慣用表現",
+      "description": "字面義・実際の意味・使用上の注意を確認。"
+    },
+    "about": {
+      "title": "概要",
+      "description": "韓国語の発音、活用、漢字語、慣用表現を理解するためのリファレンス。",
+      "introEn": "Korean Reference is a multilingual reference website for sound changes, conjugation, Hanja vocabulary, idioms, and practical examples.",
+      "introZh": "面向中、英、日母语学习者的韩语音变、用言变形、汉字词与习语查询网站。",
+      "introJa": "中国語・英語・日本語話者向けの、韓国語の音変化、用言活用、漢字語、慣用表現を調べられるリファレンスサイト。"
+    }
+  },
+  "content": {
+    "fallbackToEnglish": "この翻訳は未完了のため、英語版を表示しています。",
+    "contentInProgress": "この言語のコンテンツはまだ準備中です。",
+    "demoSectionTitle": "コンテンツフォールバックのデモ",
+    "demoSectionDescription": "以下の Mock コンテンツは翻訳フォールバックの動作を示します。",
+    "demoFallbackLabel": "サンプル（日本語未訳 → 英語にフォールバック）",
+    "demoMissingLabel": "サンプル（すべての言語で未提供）"
+  },
+  "data": {
+    "featuredEntries": "サンプルエントリ",
+    "featuredEntriesDescription": "Mock データセットからの公開エントリ。",
+    "noPublishedItems": "公開コンテンツがありません。",
+    "viewDetails": "詳細",
+    "literalMeaning": "字面の意味",
+    "actualMeaning": "実際の意味",
+    "examples": "例文",
+    "steps": "活用ステップ",
+    "irregular": "不規則",
+    "hanjaCharacters": "逐字説明",
+    "hanjaSingleCharTitle": "一文字検索プレビュー（人）",
+    "hanjaSingleCharDescription": "漢字「人」を含む公開漢字語。",
+    "notes": "補足",
+    "usageNotes": "用法",
+    "conditions": "条件",
+    "exceptions": "例外",
+    "explanation": "説明",
+    "categories": "カテゴリ",
+    "register": "文体",
+    "formPresentPolite": "現在・敬語",
+    "formPastPolite": "過去・敬語",
+    "formPresentFormal": "現在・正式体",
+    "formPastFormal": "過去・正式体",
+    "formPresentInformal": "現在・普通体",
+    "formPropositive": "勧誘形",
+    "result": "結果",
+    "stem": "語幹",
+    "notFound": "項目が見つからないか、未公開です。"
+  },
+  "search": {
+    "initialTitle": "全モジュール横断検索",
+    "initialDescription": "韓国語見出し、漢字、意味、または収録済みの活用形を入力してください。韓国語・漢字は1文字から、その他の文字は2文字以上で検索できます。",
+    "resultsFor": "「{query}」の結果 {count, plural, other {#}} 件",
+    "loadingSuggestions": "候補を読み込み中…",
+    "noResultsTitle": "結果が見つかりません",
+    "noResultsDescription": "公開コンテンツに「{query}」に一致する項目はありません。",
+    "noResultsHintSpelling": "スペルを確認するか、辞書形で試してください。",
+    "noResultsHintBaseForm": "動詞・形容詞の原形（例：들어요 ではなく 듣다）も試してください。",
+    "noResultsHintBrowse": "下の4つのモジュールから閲覧することもできます。",
+    "noResultsFeedbackPlaceholder": "コンテンツ提案とフィードバックは今後の段階で提供予定です。",
+    "groupEntries": "エントリ",
+    "groupSoundChange": "音変化",
+    "groupConjugation": "活用",
+    "groupHanja": "漢字語",
+    "groupIdioms": "慣用表現",
+    "browse": {
+      "sound-change": "音変化",
+      "conjugation": "活用",
+      "hanja": "漢字語",
+      "idioms": "慣用表現"
+    },
+    "match": {
+      "headword_exact": "見出し完全一致",
+      "headword_prefix": "見出し前方一致",
+      "headword_partial": "見出し部分一致",
+      "hanja_exact": "漢字完全一致",
+      "hanja_partial": "漢字部分一致",
+      "definition_current_exact": "現在言語の意味完全一致",
+      "definition_current_partial": "現在言語の意味部分一致",
+      "definition_other_exact": "他言語の意味完全一致",
+      "definition_other_partial": "他言語の意味部分一致",
+      "conjugated_form_exact": "活用形完全一致",
+      "conjugated_form_partial": "活用形部分一致",
+      "title_exact": "タイトル完全一致",
+      "title_prefix": "タイトル前方一致",
+      "title_partial": "タイトル部分一致",
+      "keyword_partial": "キーワード一致",
+      "romanization_exact": "ローマ字完全一致",
+      "romanization_prefix": "ローマ字前方一致",
+      "romanization_alias_exact": "ローマ字別名完全一致",
+      "romanization_alias_prefix": "ローマ字別名前方一致"
+    }
+  },
+  "moduleFilters": {
+    "search": "このモジュール内検索",
+    "searchPlaceholder": "韓国語、漢字、ローマ字、意味…",
+    "category": "カテゴリ",
+    "difficulty": "難易度",
+    "character": "漢字",
+    "partOfSpeech": "品詞",
+    "register": "文体",
+    "all": "すべて",
+    "resultCount": "{count} 件",
+    "clearFilters": "フィルターを解除",
+    "noFilterResults": "現在の条件に一致する項目はありません。",
+    "relatedRules": "関連規則",
+    "relatedEntries": "関連エントリ",
+    "relatedIdioms": "類似表現",
+    "relatedHanja": "同字関連語",
+    "linkedEntry": "関連韓国語エントリ",
+    "exampleWords": "例語",
+    "usageContext": "使用場面",
+    "commonMistakes": "よくある誤用",
+    "conjugationNotRecorded": "この組み合わせはデータセットに未収録です。",
+    "conjugationSelectPrompt": "収録済みの見出しと活用形を選ぶと、確認済みの結果を表示します。",
+    "conjugationReset": "リセット",
+    "conjugationEntry": "辞書形",
+    "conjugationForm": "活用形",
+    "conjugationAllEntries": "見出しを選択…",
+    "conjugationAllForms": "活用形を選択…",
+    "hanjaTableWord": "韓国語",
+    "hanjaTableCharacter": "漢字",
+    "hanjaTableReading": "読み",
+    "hanjaTableMeaning": "意味",
+    "categories": {
+      "liaison": "連音",
+      "nasalization": "鼻音化",
+      "liquidization": "流音化",
+      "tensification": "激音化",
+      "aspiration": "送気音化",
+      "h_changes": "ㅎ 音変化",
+      "batchim": "パッチム",
+      "other": "その他"
+    },
+    "difficulties": {
+      "beginner": "初級",
+      "intermediate": "中級",
+      "advanced": "上級"
+    },
+    "registers": {
+      "formal": "格式",
+      "neutral": "中性",
+      "informal": "非格式"
+    },
+    "idiomCategories": {
+      "daily": "日常生活",
+      "emotion": "感情",
+      "relationship": "人間関係",
+      "work-study": "仕事・学習",
+      "body": "身体",
+      "animal": "動物",
+      "formal": "格式",
+      "colloquial": "口語"
+    },
+    "pos": {
+      "verb": "動詞",
+      "adjective": "形容詞",
+      "noun": "名詞",
+      "adverb": "副詞",
+      "particle": "助詞",
+      "other": "その他"
+    }
+  },
+  "metadata": {
+    "title": "韓国語リファレンス",
+    "description": "中国語・英語・日本語話者向けの韓国語リファレンスサイト。"
+  }
+}

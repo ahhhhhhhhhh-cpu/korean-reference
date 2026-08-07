@@ -1,0 +1,14 @@
+-- Phase 6A.2: consolidation marker
+--
+-- All SQL previously in this file has been merged into earlier migrations so that
+-- each step is safe if applied in order and no later migration is required to fix
+-- an insecure intermediate state:
+--
+--   20260806000008_feedback.sql
+--     feedback_targets_are_consistent(), feedback_target_consistency CHECK
+--   20260806000009_integrity_functions_and_triggers.sql
+--     validators, guards, deferred child/reverse triggers, published_at CHECKs
+--   20260806000010_rls_and_grants.sql
+--     app_private helpers, non-recursive sources RLS, hardened submit_feedback()
+--
+-- No additional statements.

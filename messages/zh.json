@@ -1,0 +1,241 @@
+{
+  "common": {
+    "siteName": "韩语参考",
+    "siteShort": "KR",
+    "tagline": "快速理解韩语的发音、变形与词义。",
+    "description": "面向中、英、日母语学习者的韩语音变、用言变形、汉字词与习语参考网站。",
+    "search": "搜索",
+    "language": "语言",
+    "selectLanguage": "选择语言",
+    "openMenu": "打开导航菜单",
+    "mainNav": "主导航",
+    "searchEntries": "搜索韩语词条",
+    "searchPlaceholder": "搜索韩文、汉字或释义…",
+    "searchComingSoon": "搜索与自动完成将在后续开发阶段启用。",
+    "comingSoon": "此模块将在后续开发阶段实现。"
+  },
+  "nav": {
+    "home": "首页",
+    "search": "综合查询",
+    "soundChange": "音变",
+    "conjugation": "用言变形",
+    "hanja": "汉字词",
+    "idioms": "习语",
+    "about": "关于"
+  },
+  "home": {
+    "browseModules": "浏览模块",
+    "browseModulesDescription": "进入四个核心参考模块。",
+    "multilingualPreview": "多语言排版预览",
+    "multilingualPreviewDescription": "韩文、汉字、日文与英文混排示例。",
+    "sampleGada": "가다 · 去 · 行く",
+    "sampleGadaDescription": "English: to go\n中文：走；前往\n日本語：行く",
+    "sampleSchool": "학교 · 學校",
+    "sampleSchoolDescription": "汉字词发音与释义说明示例。",
+    "sampleIdiom": "식은 죽 먹기",
+    "sampleIdiomDescription": "字面：吃凉粥\n实际：轻而易举"
+  },
+  "modules": {
+    "sound-change": {
+      "title": "音变",
+      "description": "浏览连音、鼻音化等发音规则。"
+    },
+    "conjugation": {
+      "title": "用言变形",
+      "description": "查询动词与形容词词尾变化及步骤说明。"
+    },
+    "hanja": {
+      "title": "汉字词",
+      "description": "了解韩语汉字词与汉字来源的关系。"
+    },
+    "idioms": {
+      "title": "习语",
+      "description": "查询惯用表达、使用场景与例句。"
+    }
+  },
+  "pages": {
+    "search": {
+      "title": "综合查询",
+      "description": "跨模块搜索词条、音变规则、用言变形、汉字词与习语。"
+    },
+    "soundChange": {
+      "title": "音变",
+      "description": "浏览连音、鼻音化、音节末辅音等发音规则。"
+    },
+    "conjugation": {
+      "title": "用言变形",
+      "description": "查询动词与形容词词尾变化，含不规则说明。"
+    },
+    "hanja": {
+      "title": "汉字词",
+      "description": "探索韩语汉字词、逐字解释与单字反查。"
+    },
+    "idioms": {
+      "title": "习语",
+      "description": "浏览惯用表达的字面义、实际义与使用说明。"
+    },
+    "about": {
+      "title": "关于",
+      "description": "韩语参考帮助学习者理解发音、变形、汉字词与习语。",
+      "introEn": "Korean Reference is a multilingual reference website for sound changes, conjugation, Hanja vocabulary, idioms, and practical examples.",
+      "introZh": "面向中、英、日母语学习者的韩语音变、用言变形、汉字词与习语查询网站。",
+      "introJa": "中国語・英語・日本語話者向けの、韓国語の音変化、用言活用、漢字語、慣用表現を調べられるリファレンスサイト。"
+    }
+  },
+  "content": {
+    "fallbackToEnglish": "当前翻译尚未完成，以下为英文内容。",
+    "contentInProgress": "该语言内容尚未准备完成。",
+    "demoSectionTitle": "内容回退演示",
+    "demoSectionDescription": "以下 Mock 内容用于演示翻译回退行为。",
+    "demoFallbackLabel": "示例说明（日文缺失 → 回退英文）",
+    "demoMissingLabel": "示例说明（各语言均缺失）"
+  },
+  "data": {
+    "featuredEntries": "示例词条",
+    "featuredEntriesDescription": "来自 Mock 数据集的已发布词条。",
+    "noPublishedItems": "暂无已发布内容。",
+    "viewDetails": "查看",
+    "literalMeaning": "字面意义",
+    "actualMeaning": "实际意义",
+    "examples": "例句",
+    "steps": "变形步骤",
+    "irregular": "不规则",
+    "hanjaCharacters": "逐字解释",
+    "hanjaSingleCharTitle": "单字反查预览（人）",
+    "hanjaSingleCharDescription": "包含汉字「人」的已发布韩语汉字词。",
+    "notes": "补充说明",
+    "usageNotes": "用法说明",
+    "conditions": "适用条件",
+    "exceptions": "例外",
+    "explanation": "详细解释",
+    "categories": "分类",
+    "register": "语体",
+    "formPresentPolite": "现在敬语",
+    "formPastPolite": "过去敬语",
+    "formPresentFormal": "现在正式体",
+    "formPastFormal": "过去正式体",
+    "formPresentInformal": "现在非正式体",
+    "formPropositive": "提议形",
+    "result": "变形结果",
+    "stem": "词干",
+    "notFound": "未找到请求的内容，或该内容尚未发布。"
+  },
+  "search": {
+    "initialTitle": "跨模块综合查询",
+    "initialDescription": "可输入韩文词条、汉字、释义或已收录的变形形式。韩文与汉字查询至少 1 个字符；其他文字至少 2 个字符。",
+    "resultsFor": "「{query}」共 {count, plural, other {#}} 条结果",
+    "loadingSuggestions": "正在加载建议…",
+    "noResultsTitle": "未找到结果",
+    "noResultsDescription": "已发布内容中没有与「{query}」匹配的项目。",
+    "noResultsHintSpelling": "请检查拼写，或尝试输入词典原形。",
+    "noResultsHintBaseForm": "可尝试动词/形容词原形（例如输入 듣다 而非 들어요）。",
+    "noResultsHintBrowse": "也可浏览下方四大模块。",
+    "noResultsFeedbackPlaceholder": "内容建议与反馈入口将在后续阶段开放。",
+    "groupEntries": "词条",
+    "groupSoundChange": "音变规则",
+    "groupConjugation": "用言变形",
+    "groupHanja": "汉字词",
+    "groupIdioms": "习语",
+    "browse": {
+      "sound-change": "音变规则",
+      "conjugation": "用言变形",
+      "hanja": "汉字词",
+      "idioms": "习语"
+    },
+    "match": {
+      "headword_exact": "韩文完全匹配",
+      "headword_prefix": "韩文前缀匹配",
+      "headword_partial": "韩文部分匹配",
+      "hanja_exact": "汉字完全匹配",
+      "hanja_partial": "汉字部分匹配",
+      "definition_current_exact": "当前语言释义完全匹配",
+      "definition_current_partial": "当前语言释义部分匹配",
+      "definition_other_exact": "其他语言释义完全匹配",
+      "definition_other_partial": "其他语言释义部分匹配",
+      "conjugated_form_exact": "变形形式完全匹配",
+      "conjugated_form_partial": "变形形式部分匹配",
+      "title_exact": "标题完全匹配",
+      "title_prefix": "标题前缀匹配",
+      "title_partial": "标题部分匹配",
+      "keyword_partial": "关键词匹配",
+      "romanization_exact": "罗马字完全匹配",
+      "romanization_prefix": "罗马字前缀匹配",
+      "romanization_alias_exact": "罗马字别名完全匹配",
+      "romanization_alias_prefix": "罗马字别名前缀匹配"
+    }
+  },
+  "moduleFilters": {
+    "search": "模块内搜索",
+    "searchPlaceholder": "韩文、汉字、罗马字或释义…",
+    "category": "分类",
+    "difficulty": "难度",
+    "character": "汉字",
+    "partOfSpeech": "词性",
+    "register": "语体",
+    "all": "全部",
+    "resultCount": "共 {count} 条结果",
+    "clearFilters": "清除筛选",
+    "noFilterResults": "当前筛选条件下没有匹配项目。",
+    "relatedRules": "相关规则",
+    "relatedEntries": "相关词条",
+    "relatedIdioms": "相近表达",
+    "relatedHanja": "同字相关词",
+    "linkedEntry": "关联韩语词条",
+    "exampleWords": "例词",
+    "usageContext": "使用场景",
+    "commonMistakes": "常见误用",
+    "conjugationNotRecorded": "当前组合尚未收录在数据集中。",
+    "conjugationSelectPrompt": "请选择已收录的词条与形式，查看审核过的变形结果。",
+    "conjugationReset": "重置",
+    "conjugationEntry": "词典原形",
+    "conjugationForm": "目标形式",
+    "conjugationAllEntries": "选择词条…",
+    "conjugationAllForms": "选择形式…",
+    "hanjaTableWord": "韩文词",
+    "hanjaTableCharacter": "汉字",
+    "hanjaTableReading": "读音",
+    "hanjaTableMeaning": "释义",
+    "categories": {
+      "liaison": "连音",
+      "nasalization": "鼻音化",
+      "liquidization": "流音化",
+      "tensification": "紧音化",
+      "aspiration": "送气音化",
+      "h_changes": "ㅎ 音变",
+      "batchim": "收音",
+      "other": "其他"
+    },
+    "difficulties": {
+      "beginner": "初级",
+      "intermediate": "中级",
+      "advanced": "高级"
+    },
+    "registers": {
+      "formal": "正式",
+      "neutral": "中性",
+      "informal": "非正式"
+    },
+    "idiomCategories": {
+      "daily": "日常生活",
+      "emotion": "情感",
+      "relationship": "人际关系",
+      "work-study": "工作学习",
+      "body": "身体",
+      "animal": "动物",
+      "formal": "正式",
+      "colloquial": "口语"
+    },
+    "pos": {
+      "verb": "动词",
+      "adjective": "形容词",
+      "noun": "名词",
+      "adverb": "副词",
+      "particle": "助词",
+      "other": "其他"
+    }
+  },
+  "metadata": {
+    "title": "韩语参考",
+    "description": "面向中、英、日母语学习者的韩语音变、用言变形、汉字词与习语查询网站。"
+  }
+}

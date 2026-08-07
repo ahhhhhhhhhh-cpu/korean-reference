@@ -1,8 +1,7 @@
 # 当前项目状态（Current Status）
 
-> 文档版本：1.0  
-> 最后更新：2026-08-03  
-> 项目：Korean Reference
+> 文档版本：1.5  
+> 最后更新：2026-08-07（Phase 6E — Preview 集成进行中）
 
 ---
 
@@ -10,10 +9,11 @@
 
 | 项目 | 状态 |
 |------|------|
-| **当前阶段** | 阶段 0 — 文档与项目初始化 |
-| **整体进度** | ~5%（文档完成，代码未开始） |
-| **阻塞项** | 无 |
-| **下一任务** | 创建 GitHub 仓库并初始化 Next.js 项目 |
+| **当前阶段** | Phase 6E 进行中（本地就绪；GitHub/Vercel 待配置） |
+| **整体进度** | ~78% |
+| **阻塞项** | GitHub remote 为占位 URL；Vercel CLI 需登录 |
+| **工作方式** | 本地 Next.js + 远程 `korean-reference-dev`；Preview 待部署 |
+| **下一任务** | 配置 GitHub remote → Vercel Preview → 公网验证 |
 
 ---
 
@@ -21,143 +21,61 @@
 
 | 阶段 | 名称 | 状态 | 完成日期 |
 |------|------|------|----------|
-| 0 | 文档与项目初始化 | 🟡 进行中 | — |
-| 1 | 设计系统与布局 | ⚪ 未开始 | — |
-| 2 | i18n 与路由 | ⚪ 未开始 | — |
-| 3 | Mock 数据层 | ⚪ 未开始 | — |
-| 4 | 首页与综合搜索 | ⚪ 未开始 | — |
-| 5 | 词条详情页 | ⚪ 未开始 | — |
-| 6 | 音变模块 | ⚪ 未开始 | — |
-| 7 | 用言变形模块 | ⚪ 未开始 | — |
-| 8 | 汉字词模块 | ⚪ 未开始 | — |
-| 9 | 习语模块 | ⚪ 未开始 | — |
-| 10 | 错误反馈 | ⚪ 未开始 | — |
-| 11 | Supabase 接入 | ⚪ 未开始 | — |
-| 12 | SEO 与性能 | ⚪ 未开始 | — |
-| 13 | 测试与验收 | ⚪ 未开始 | — |
-| 14 | 深色模式 | ⚪ 未开始 | — |
-
-**图例：** ✅ 完成 · 🟡 进行中 · ⚪ 未开始
+| 6C | 测试 Seed + Supabase Adapter | ✅ 完成 | 2026-08-07 |
+| 6D | 远程 dev 接入 | ✅ 完成 | 2026-08-07 |
+| 6E | Vercel Preview 集成 | 🔄 进行中 | — |
 
 ---
 
-## 3. 已完成项
+## 3. Phase 6E 状态
 
-### 文档（2026-08-03）
+### 已完成（本地）
 
-- [x] SOFT 项目概述（`01-soft-overview.md`）
-- [x] 产品需求文档（`02-product-requirements.md`）
-- [x] 用户交互流程（`03-user-flows.md`）
-- [x] 数据模型（`04-data-model.md`）
-- [x] 程序架构（`05-architecture.md`）
-- [x] 开发计划（`06-development-plan.md`）
-- [x] 当前状态（本文档）
-- [x] 技术决策记录（`08-decisions.md`）
-- [x] 测试计划（`09-test-plan.md`）
-- [x] 内容规范（`10-content-guidelines.md`）
-- [x] README.md
-- [x] CHANGELOG.md
-- [x] .env.example
+- [x] Git 安全检查 — 无 secret 被 tracked；`.env.local` / `supabase/.temp/` 已忽略
+- [x] `npm run lint` PASS
+- [x] Vitest **58/58** PASS
+- [x] `npm run build` PASS（连接 `korean-reference-dev` synthetic data）
+- [x] Publishable key 模式（无 service_role / secret）
 
-### 产品决策
+### 待完成（需人工）
 
-- [x] 品牌名称：Korean Reference / 韩语参考 / 韓国語リファレンス
-- [x] 默认语言：英文
-- [x] URL 结构：`/en|zh|ja/...`
-- [x] 视觉方向：暖灰 + 深青，学术简约
-- [x] 数据策略：Mock → Supabase
-- [x] 第一版范围边界确认
+- [ ] 将 `origin` 设为真实 GitHub repository URL（当前为占位符）
+- [ ] Commit + push 当前 branch
+- [ ] Vercel CLI / Dashboard 登录
+- [ ] Vercel Preview 环境变量（仅 Preview scope）：
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  - `DATA_SOURCE=supabase`
+- [ ] Preview Deployment 公网 spot-check
 
----
+### 明确不做
 
-## 4. 进行中项
-
-| 任务 | 负责人 | 说明 |
-|------|--------|------|
-| 阶段 0 剩余任务 | — | GitHub 仓库、Next.js 初始化、Vercel 连接 |
+- Production Supabase / Production promote
+- 正式词库导入
+- Feedback 写入开放
+- 为 linked pgTAP 修改业务 schema
 
 ---
 
-## 5. 未开始项
+## 4. Technical debt（non-blocking）
 
-### 基础设施
+**Remote hosted pgTAP：** Supabase 托管环境的 `extensions.pgtap` + `search_path=""` 导致 `test db --linked` 无法运行。验证依据：
 
-- [ ] GitHub 仓库创建
-- [ ] Next.js 项目初始化
-- [ ] Vercel 项目连接
-- [ ] Supabase 项目创建
-
-### 代码
-
-- [ ] 全部应用代码（页面、组件、Repository、API）
-- [ ] 数据库 Migration
-- [ ] 测试用例
-
-### 内容
-
-- [ ] 正式词条内容录入
-- [ ] 三语翻译校对
+- local pgTAP 54/54 PASS
+- remote schema / RLS / manual + Preview 验证
 
 ---
 
-## 6. 第一版成功标准检查
+## 5. 数据说明
 
-来源：[01-soft-overview.md](./01-soft-overview.md)
-
-| 标准 | 状态 |
-|------|------|
-| 网站可通过公开网址访问 | ❌ |
-| 手机与电脑均可正常使用 | ❌ |
-| 用户无需登录即可查询 | ❌ |
-| 综合查询流程完整 | ❌ |
-| 音变查询流程完整 | ❌ |
-| 用言变形查询流程完整 | ❌ |
-| 汉字词与习语独立页面 | ❌ |
-| 三语界面切换 | ❌ |
-| 三语解释展示 | ❌ |
-| 数据从数据库读取 | ❌ |
-| 用户不能修改正式数据 | ❌ |
-| 错误反馈可提交 | ❌ |
-| GitHub → Vercel 自动部署 | ❌ |
-| 无阻断性严重错误 | ❌ |
+当前远程 `korean-reference-dev` 全部为 **TEST / SYNTHETIC DATA**，非正式词库。
 
 ---
 
-## 7. 平台资源状态
-
-| 资源 | 状态 | 备注 |
-|------|------|------|
-| GitHub 仓库 | ❌ 未创建 | 建议名：`korean-reference` |
-| Vercel 项目 | ❌ 未创建 | 建议名：`korean-reference` |
-| Supabase 项目 | ❌ 未创建 | 建议名：`korean-reference` |
-| 正式域名 | ❌ 未决定 | 可使用 Vercel 默认域名 |
-
----
-
-## 8. 已知问题
-
-| 问题 | 优先级 | 状态 |
-|------|--------|------|
-| 无 | — | — |
-
----
-
-## 9. 最近更新日志
+## 6. 最近更新日志
 
 | 日期 | 更新内容 |
 |------|----------|
-| 2026-08-03 | 初始文档集生成；项目状态建立；阶段 0 文档任务完成 |
-
----
-
-## 10. 更新规则
-
-本文档应在以下时机更新：
-
-1. 每个开发阶段开始或完成时
-2. 里程碑达成时
-3. 出现阻塞项或重大变更时
-4. 平台资源（GitHub/Vercel/Supabase）创建或变更时
-5. 第一版成功标准某项达成时
-
-更新时请同步修改顶部的「最后更新」日期。
+| 2026-08-07 | Phase 6E：本地回归全绿；GitHub/Vercel 待配置 |
+| 2026-08-07 | Phase 6D：远程 dev 接入 + synthetic seed |
+| 2026-08-07 | Phase 6C：测试 Seed + Supabase Adapter |

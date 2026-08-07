@@ -85,11 +85,37 @@
 | 字段 | 说明 |
 |------|------|
 | pronunciation | 实际发音（含音变后） |
-| romanization | 罗马字（Revised Romanization） |
+| romanization | 主罗马字（见 §5.2.1 Revised Romanization） |
+| romanization_aliases | 审核过的备用罗马字（可选，数组） |
 | hanja_text | 汉字来源 |
 | irregular_type | 不规则类型（若适用） |
 | frequency_level | 频率：high / medium / low |
 | difficulty_level | 难度：beginner / intermediate / advanced |
+
+### 5.2.1 罗马字标准（Revised Romanization of Korean）
+
+本项目采用 **大韩民国文化体育观光部 Revised Romanization of Korean（RR，修订罗马字）** 作为唯一主标准。
+
+| 规则 | 说明 |
+|------|------|
+| 体系 | Revised Romanization of Korean（RR） |
+| 主字段 | `romanization` — 每个可搜索词条/汉字词一条主值 |
+| 别名字段 | `romanization_aliases` — 仅存放**人工审核**过的备用写法，不是自动生成 |
+| 大小写 | 存储用小写；搜索时忽略大小写 |
+| 分隔符 | 搜索时忽略空格、连字符 `-`、撇号 `'` 差异 |
+| 禁止 | 不自动推断 McCune-Reischauer、Yale 等其他体系；不做任意韩文→罗马字转换 |
+
+**示例：**
+
+| headword_ko | romanization | romanization_aliases |
+|-------------|--------------|----------------------|
+| 듣다 | deutda | deudda |
+| 먹다 | meokda | — |
+| 학교 | hakgyo | — |
+| 사람 | saram | — |
+| 쉽다 | swipda | sipda |
+
+别名仅用于常见已审核变体（如 `deudda`），**不得**把未审核的拼写猜测写入 Seed。
 
 ### 5.3 翻译字段（每种 locale 独立）
 
