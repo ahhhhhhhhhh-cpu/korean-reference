@@ -9,11 +9,11 @@
 
 | 项目 | 状态 |
 |------|------|
-| **当前阶段** | Phase 6E 进行中（本地就绪；GitHub/Vercel 待配置） |
-| **整体进度** | ~78% |
-| **阻塞项** | GitHub remote 为占位 URL；Vercel CLI 需登录 |
-| **工作方式** | 本地 Next.js + 远程 `korean-reference-dev`；Preview 待部署 |
-| **下一任务** | 配置 GitHub remote → Vercel Preview → 公网验证 |
+| **当前阶段** | Phase 6E Preview 已部署（CLI `--target=preview`） |
+| **整体进度** | ~82% |
+| **阻塞项** | Vercel GitHub App 未连接；Deployment Protection 阻挡公网自动化测试 |
+| **工作方式** | Preview → `korean-reference-dev`（synthetic）；Production 无 dev env |
+| **下一任务** | Dashboard 连接 GitHub + 关闭/绕过 Preview Protection → 公网人工验证 |
 
 ---
 
