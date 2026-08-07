@@ -76,6 +76,6 @@
 
 | 日期 | 更新内容 |
 |------|----------|
-| 2026-08-07 | Phase 6E：本地回归全绿；GitHub/Vercel 待配置 |
+| 2026-08-07 | Phase 6E：Vercel Preview branch `preview/phase-6e` 验证启动 |
 | 2026-08-07 | Phase 6D：远程 dev 接入 + synthetic seed |
 | 2026-08-07 | Phase 6C：测试 Seed + Supabase Adapter |
