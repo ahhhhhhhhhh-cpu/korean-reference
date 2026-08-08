@@ -37,7 +37,7 @@ export const ETYMOLOGY_TYPES = [
   "unknown",
 ] as const;
 
-export const IRREGULAR_TYPES = ["ㄷ", "ㅂ", "르", "ㅎ", "ㅅ", "ㅡ", "ㄹ"] as const;
+export const IRREGULAR_TYPES = ["ㄷ", "ㅂ", "ㅅ", "ㅎ", "르", "러", "여", "우"] as const;
 
 export const DIFFICULTY_LEVELS = ["beginner", "intermediate", "advanced"] as const;
 

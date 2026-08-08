@@ -1,4 +1,4 @@
-export const IRREGULAR_TYPES = ["ㄷ", "ㅂ", "르", "ㅎ", "ㅅ", "ㅡ", "ㄹ"] as const;
+export const IRREGULAR_TYPES = ["ㄷ", "ㅂ", "ㅅ", "ㅎ", "르", "러", "여", "우"] as const;
 
 export type IrregularType = (typeof IRREGULAR_TYPES)[number];
 

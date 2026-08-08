@@ -1,7 +1,7 @@
 # Production Readiness — Korean Reference
 
-> **Phase 7A–7B** — architecture, deployment runbook, formal content pipeline scaffolding.  
-> **Status:** `korean-reference-prod` schema deployed (Phase 7B). No content. Vercel Production not configured.
+> **Phase 7A–7C-3C** — architecture, deployment runbook, formal content pipeline scaffolding.  
+> **Status:** `korean-reference-prod` schema **12/12** (Phase 7C-3C). System conjugation forms only. **No formal content.** Vercel Production not configured.
 
 ---
 
@@ -14,10 +14,25 @@ GitHub main                    (not merged yet)
       ↓
 Vercel Production              (not configured yet)
       ↓
-korean-reference-prod          ✅ schema deployed
+korean-reference-prod          ✅ schema 12/12 (Phase 7C-3C)
       ↓
-(empty — no formal or synthetic content)
+(empty — no formal or synthetic content; 6 system conjugation_forms only)
 ```
+
+**Phase 7C-3C verified (2026-08-08):**
+
+| Check | Result |
+|-------|--------|
+| Migrations applied | **12/12** local = remote |
+| `public` business tables | 39 |
+| RLS enabled | 39/39 |
+| System `conjugation_forms` | 6 (published) |
+| System `conjugation_form_translations` | 18 (en/zh/ja, published) |
+| Formal content rows | 0 (entries, examples, modules) |
+| Synthetic seed slugs | none |
+| Seed applied | **No** |
+| Feedback enabled | **No** |
+| `korean-reference-dev` modified | **No** (this phase) |
 
 **Phase 7B verified (2026-08-08):**
 
@@ -40,7 +55,7 @@ Vercel Preview
       ↓
 korean-reference-dev
       ↓
-TEST / SYNTHETIC DATA (supabase/seed.sql)
+TEST / SYNTHETIC DATA (supabase/seed.sql; schema 12/12 after Phase 7C-3B)
 ```
 
 **Never mix environments.** Preview uses dev Supabase + synthetic seed. Production uses a separate project with migrations only — no seed.
@@ -208,17 +223,15 @@ Use before merging preview work to `main` and cutting Production:
 [ ] Rollback path confirmed (previous deployment + DB backup)
 ```
 
-**Phase 7A:** Do not merge to `main` or deploy Production yet.
+**Phase 7C-3C note:** Production and dev both have migration 12. Production contains **only** the six system conjugation forms from that migration — no lexical/formal content.
 
 ---
 
-## 9. Next step after Phase 7A
-
-~~When approved:~~
+## 9. Next step after Phase 7C-3C
 
 1. ~~Create **`korean-reference-prod`** Supabase project~~ ✅ Phase 7B
-2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B
-3. **Formal Content Review + Production Import Preparation** ← current
+2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B + 7C-3C (12/12)
+3. **Formal Pilot CSV authoring + validation** ← current
 4. Author formal CSV from `data/templates/`
-5. Enable live import (future phase)
+5. Dry-run import against dev, then Production import (future phase)
 6. Merge to `main` + configure Vercel Production env

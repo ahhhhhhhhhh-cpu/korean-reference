@@ -97,7 +97,7 @@ All files listed under [templates/README.md](./templates/README.md).
 
 ### System reference (not in formal CSV)
 
-**`conjugation_forms`** — reference data (six form codes). Results CSV uses `form_code`, not a form UUID.
+**`conjugation_forms`** — **system reference data** (six form codes), created by migration `20260808000012_conjugation_taxonomy_and_system_forms.sql`, not by `seed.sql` or formal CSV. Results CSV uses `form_code`, not a form UUID.
 
 ---
 

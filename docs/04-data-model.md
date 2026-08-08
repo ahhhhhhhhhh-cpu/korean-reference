@@ -81,7 +81,7 @@ erDiagram
 | pronunciation | text | 发音（韩文或描述） |
 | romanization | text | RR 主罗马字（可选；阶段 4.1 起可搜索） |
 | romanization_aliases | text[] | 审核过的备用罗马字（可选） |
-| irregular_type | text | 不规则类型（nullable）：`ㄷ` `ㅂ` `르` `ㅎ` `ㅅ` `ㅡ` `ㄹ` |
+| irregular_type | text | 不规则类型（nullable）：`ㄷ` `ㅂ` `ㅅ` `ㅎ` `르` `러` `여` `우` |
 | etymology_type | text | 词源（nullable）：`native` `sino_korean` `loanword` `hybrid` `unknown` |
 | hanja_text | text | 对应汉字（nullable） |
 | status | text | `draft` / `in_review` / `published` / `archived` |

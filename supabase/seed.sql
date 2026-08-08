@@ -138,34 +138,6 @@ INSERT INTO public.sound_change_examples (id, rule_id, example_id, step_id, disp
   ('dddddddd-dddd-4ddd-8ddd-dddddddddd02', '88888888-8888-4888-8888-888888888802', '44444444-4444-4444-8444-444444444403', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa02', 1),
   ('dddddddd-dddd-4ddd-8ddd-dddddddddd03', '88888888-8888-4888-8888-888888888803', '44444444-4444-4444-8444-444444444405', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa04', 1);
 
-INSERT INTO public.conjugation_forms (id, code, sort_order, status) VALUES
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'present_polite', 1, 'draft'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'past_polite', 2, 'draft'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'present_formal', 3, 'draft'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'past_formal', 4, 'draft'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'present_informal', 5, 'draft'),
-  ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee06', 'propositive', 6, 'draft');
-
-INSERT INTO public.conjugation_form_translations (id, form_id, locale, name, short_description, status) VALUES
-  ('ffffffff-ffff-4fff-8fff-ffffffffff01', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'en', 'Present polite', '어/아요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff02', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'zh', '现在敬语', '어/아요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff03', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'ja', '現在の敬語', '어/아요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff04', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'en', 'Past polite', '았/었어요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff05', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'zh', '过去敬语', '았/었어요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff06', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'ja', '過去の敬語', '았/었어요 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff07', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'en', 'Present formal', '습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff08', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'zh', '现在正式', '습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff09', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'ja', '現在の正式', '습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff10', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'en', 'Past formal', '았/었습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff11', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'zh', '过去正式', '았/었습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff12', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'ja', '過去の正式', '았/었습니다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff13', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'en', 'Present informal', '아/어 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff14', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'zh', '现在非敬语', '아/어 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff15', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'ja', '現在の普通体', '아/어 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff16', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee06', 'en', 'Propositive', '자/ㅋ시다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff17', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee06', 'zh', '提议形', '자/ㅋ시다 ending', 'draft'),
-  ('ffffffff-ffff-4fff-8fff-ffffffffff18', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee06', 'ja', '勧誘形', '자/ㅋ시다 ending', 'draft');
-
 INSERT INTO public.conjugation_rules (id, slug, rule_code, is_irregular, irregular_type, rule_category, status) VALUES
   ('10101010-1010-4101-8101-101010101001', 'regular-eoyo', 'REGULAR_EOYO', false, NULL, 'regular', 'draft'),
   ('10101010-1010-4101-8101-101010101002', 'd-irregular', 'D_IRREGULAR', true, 'ㄷ', 'irregular', 'draft'),
@@ -177,14 +149,14 @@ INSERT INTO public.conjugation_rule_translations (id, rule_id, locale, title, ex
   ('12121212-1212-4121-8121-121212121207', '10101010-1010-4101-8101-101010101003', 'en', 'ㅂ irregular', 'Stem-final ㅂ changes to 우 before a vowel ending.', 'draft');
 
 INSERT INTO public.conjugation_results (id, entry_id, form_id, rule_id, result, result_normalized, stem_used, is_irregular, irregular_type, variant_order, is_preferred, status) VALUES
-  ('13131313-1313-4131-8131-131313131301', '11111111-1111-4111-8111-111111111101', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101001', '가요', '가요', '가', false, NULL, 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131302', '11111111-1111-4111-8111-111111111101', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', '10101010-1010-4101-8101-101010101001', '갔어요', '갔어요', '가', false, NULL, 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131303', '11111111-1111-4111-8111-111111111103', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101002', '듣어요', '듣어요', '듣', true, 'ㄷ', 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131304', '11111111-1111-4111-8111-111111111102', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101001', '예뻐요', '예뻐요', '예쁘', false, NULL, 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131305', '11111111-1111-4111-8111-111111111105', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101001', '먹어요', '먹어요', '먹', false, NULL, 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131306', '11111111-1111-4111-8111-111111111106', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', NULL, '올라요', '올라요', '오르', true, '르', 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131307', '11111111-1111-4111-8111-111111111107', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101003', '쉽워요', '쉽워요', '쉽', true, 'ㅂ', 1, true, 'draft'),
-  ('13131313-1313-4131-8131-131313131308', '11111111-1111-4111-8111-111111111108', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', '10101010-1010-4101-8101-101010101001', '커요', '커요', '크', false, NULL, 1, true, 'draft');
+  ('13131313-1313-4131-8131-131313131301', '11111111-1111-4111-8111-111111111101', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101001', '가요', '가요', '가', false, NULL, 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131302', '11111111-1111-4111-8111-111111111101', (SELECT id FROM public.conjugation_forms WHERE code = 'past_polite' LIMIT 1), '10101010-1010-4101-8101-101010101001', '갔어요', '갔어요', '가', false, NULL, 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131303', '11111111-1111-4111-8111-111111111103', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101002', '듣어요', '듣어요', '듣', true, 'ㄷ', 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131304', '11111111-1111-4111-8111-111111111102', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101001', '예뻐요', '예뻐요', '예쁘', false, NULL, 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131305', '11111111-1111-4111-8111-111111111105', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101001', '먹어요', '먹어요', '먹', false, NULL, 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131306', '11111111-1111-4111-8111-111111111106', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), NULL, '올라요', '올라요', '오르', true, '르', 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131307', '11111111-1111-4111-8111-111111111107', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101003', '쉽워요', '쉽워요', '쉽', true, 'ㅂ', 1, true, 'draft'),
+  ('13131313-1313-4131-8131-131313131308', '11111111-1111-4111-8111-111111111108', (SELECT id FROM public.conjugation_forms WHERE code = 'present_polite' LIMIT 1), '10101010-1010-4101-8101-101010101001', '커요', '커요', '크', false, NULL, 1, true, 'draft');
 
 INSERT INTO public.conjugation_result_steps (id, result_id, step_order, before_form, after_form, operation_code, applied_rule_id) VALUES
   ('14141414-1414-4141-8141-141414141401', '13131313-1313-4131-8131-131313131301', 1, '가', '가요', 'ADD_EOYO', '10101010-1010-4101-8101-101010101001'),
@@ -310,8 +282,6 @@ UPDATE public.examples SET status = 'published' WHERE id::text LIKE '44444444-%'
 UPDATE public.sound_change_translations SET status = 'published' WHERE id::text LIKE '99999999-%' AND locale = 'en';
 UPDATE public.sound_change_step_translations SET status = 'published' WHERE id::text LIKE 'bbbbbbbb-%' AND locale = 'en';
 UPDATE public.sound_change_rules SET status = 'published' WHERE id::text LIKE '88888888-%';
-UPDATE public.conjugation_form_translations SET status = 'published' WHERE id::text LIKE 'ffffffff-%';
-UPDATE public.conjugation_forms SET status = 'published' WHERE id::text LIKE 'eeeeeeee-%';
 UPDATE public.conjugation_rule_translations SET status = 'published' WHERE id::text LIKE '12121212-%' AND locale = 'en';
 UPDATE public.conjugation_rules SET status = 'published' WHERE id::text LIKE '10101010-%';
 UPDATE public.conjugation_result_step_translations SET status = 'published' WHERE id::text LIKE '15151515-%' AND locale = 'en';

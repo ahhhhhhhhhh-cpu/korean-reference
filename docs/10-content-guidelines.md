@@ -236,7 +236,22 @@ to go; to walk (verb)
 
 - 常用动词/形容词（如 가다, 오다, 먹다, 예쁘다, 크다）
 - 常见词尾（해요体、过去时、否定、疑问）
-- 主要不规则类型（ㄷ, ㅂ, 르, ㅎ, ㅅ, ㅡ, ㄹ）
+- 主要不规则类型（entry metadata）：`ㄷ` `ㅂ` `ㅅ` `ㅎ` `르` `러` `여` `우`
+- **不是** irregular_type：`ㅡ` 脱落、`ㄹ` 脱落 — 这些是常规活用规则（`conjugation_rules`）
+- **-하다 / -하다 谓词**：`irregular_type = 여`（如 공부하다、좋아하다）
+
+### 7.4 规则分类（Pilot 前参考）
+
+**REGULAR / REGULAR PATTERN**（conjugation_rules，非 entry metadata）：
+
+- Basic -아/어 ending selection
+- Common vowel contraction
+- ㅡ deletion
+- ㄹ deletion
+
+**IRREGULAR**（entry `irregular_type` + 对应 rules）：
+
+- 여、ㄷ、ㅂ、르、ㅅ、ㅎ irregular（`러` / `우` 为保留 canonical 值，Pilot 首批内容可暂无实例）
 
 ---
 
