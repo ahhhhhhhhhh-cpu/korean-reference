@@ -1,7 +1,7 @@
 # 当前项目状态（Current Status）
 
 > 文档版本：1.5  
-> 最后更新：2026-08-07（Phase 6E — Preview 集成进行中）
+> 最后更新：2026-08-08（Phase 6E — GitHub ↔ Vercel 已连接）
 
 ---
 
@@ -9,11 +9,11 @@
 
 | 项目 | 状态 |
 |------|------|
-| **当前阶段** | Phase 6E Preview 已部署（CLI `--target=preview`） |
+| **当前阶段** | Phase 6E — Git-based Preview 部署验证中 |
 | **整体进度** | ~82% |
-| **阻塞项** | Vercel GitHub App 未连接；Deployment Protection 阻挡公网自动化测试 |
-| **工作方式** | Preview → `korean-reference-dev`（synthetic）；Production 无 dev env |
-| **下一任务** | Dashboard 连接 GitHub + 关闭/绕过 Preview Protection → 公网人工验证 |
+| **阻塞项** | Deployment Protection 可能阻挡公网自动化测试 |
+| **工作方式** | Git push `preview/phase-6e` → Vercel Preview → `korean-reference-dev` |
+| **下一任务** | 确认 Git Preview URL + 公网 spot-check |
 
 ---
 
@@ -39,14 +39,9 @@
 
 ### 待完成（需人工）
 
-- [ ] 将 `origin` 设为真实 GitHub repository URL（当前为占位符）
-- [ ] Commit + push 当前 branch
-- [ ] Vercel CLI / Dashboard 登录
-- [ ] Vercel Preview 环境变量（仅 Preview scope）：
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-  - `DATA_SOURCE=supabase`
-- [ ] Preview Deployment 公网 spot-check
+- [x] Vercel Project 创建 + link
+- [x] GitHub repository 连接 Vercel（2026-08-08）
+- [ ] Git-based Preview Deployment 公网 spot-check
 
 ### 明确不做
 
@@ -76,6 +71,6 @@
 
 | 日期 | 更新内容 |
 |------|----------|
-| 2026-08-07 | Phase 6E：Vercel Preview branch `preview/phase-6e` 验证启动 |
+| 2026-08-08 | Phase 6E：GitHub ↔ Vercel 连接完成；触发 Git Preview deploy |
 | 2026-08-07 | Phase 6D：远程 dev 接入 + synthetic seed |
 | 2026-08-07 | Phase 6C：测试 Seed + Supabase Adapter |
