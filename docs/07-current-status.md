@@ -1,7 +1,7 @@
 # 当前项目状态（Current Status）
 
 > 文档版本：1.5  
-> 最后更新：2026-08-08（Phase 6E — GitHub ↔ Vercel 已连接）
+> 最后更新：2026-08-08（Phase 6E — Vercel Framework Preset 修正为 Next.js）
 
 ---
 
@@ -12,8 +12,8 @@
 | **当前阶段** | Phase 6E — Git-based Preview 部署验证中 |
 | **整体进度** | ~82% |
 | **阻塞项** | Deployment Protection 可能阻挡公网自动化测试 |
-| **工作方式** | Git push `preview/phase-6e` → Vercel Preview → `korean-reference-dev` |
-| **下一任务** | 确认 Git Preview URL + 公网 spot-check |
+| **工作方式** | Git push `preview/phase-6e` → Vercel Preview（Next.js preset）→ `korean-reference-dev` |
+| **下一任务** | 确认新 Git Preview URL + 公网 spot-check |
 
 ---
 
@@ -71,6 +71,7 @@
 
 | 日期 | 更新内容 |
 |------|----------|
+| 2026-08-08 | Phase 6E：Vercel Framework Preset 修正为 Next.js |
 | 2026-08-08 | Phase 6E：GitHub ↔ Vercel 连接完成；触发 Git Preview deploy |
 | 2026-08-07 | Phase 6D：远程 dev 接入 + synthetic seed |
 | 2026-08-07 | Phase 6C：测试 Seed + Supabase Adapter |
