@@ -1,7 +1,7 @@
 # Production Readiness — Korean Reference
 
 > **Phase 7A–7C-3C** — architecture, deployment runbook, formal content pipeline scaffolding.  
-> **Status:** `korean-reference-prod` schema **12/12** (Phase 7C-3C). System conjugation forms only. **No formal content.** Vercel Production not configured.
+> **Status:** `korean-reference-prod` schema **13/13** (Phase 7C-4B-1R-A4). `bound_noun` deployed to all environments. System conjugation forms only. **No formal content.** Vercel Production not configured.
 
 ---
 
@@ -14,10 +14,27 @@ GitHub main                    (not merged yet)
       ↓
 Vercel Production              (not configured yet)
       ↓
-korean-reference-prod          ✅ schema 12/12 (Phase 7C-3C)
+korean-reference-prod          ✅ schema 13/13 (Phase 7C-4B-1R-A4)
       ↓
 (empty — no formal or synthetic content; 6 system conjugation_forms only)
 ```
+
+**Phase 7C-4B-1R-A4 verified (2026-08-08):**
+
+| Check | Result |
+|-------|--------|
+| Migrations applied | **13/13** local = remote |
+| `entries.part_of_speech` | includes `bound_noun` (strict CHECK) |
+| `public` business tables | 39 |
+| RLS enabled | 39/39 |
+| System `conjugation_forms` | 6 (published) |
+| Formal content rows | 0 (entries, examples, modules) |
+| Synthetic seed slugs | none |
+| Seed applied | **No** |
+| Feedback enabled | **No** |
+| `submit_feedback` EXECUTE (anon/auth) | **0** |
+| `korean-reference-dev` modified | **No** (this phase) |
+| Pilot CSV imported | **No** (32 entries / 50 senses remain local only) |
 
 **Phase 7C-3C verified (2026-08-08):**
 
@@ -55,7 +72,7 @@ Vercel Preview
       ↓
 korean-reference-dev
       ↓
-TEST / SYNTHETIC DATA (supabase/seed.sql; schema 12/12 after Phase 7C-3B)
+TEST / SYNTHETIC DATA (supabase/seed.sql; schema 13/13 after Phase 7C-4B-1R-A3)
 ```
 
 **Never mix environments.** Preview uses dev Supabase + synthetic seed. Production uses a separate project with migrations only — no seed.
@@ -230,7 +247,7 @@ Use before merging preview work to `main` and cutting Production:
 ## 9. Next step after Phase 7C-3C
 
 1. ~~Create **`korean-reference-prod`** Supabase project~~ ✅ Phase 7B
-2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B + 7C-3C (12/12)
+2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B + 7C-3C + 7C-4B-1R-A4 (13/13)
 3. **Formal Pilot CSV authoring + validation** ← current
 4. Author formal CSV from `data/templates/`
 5. Dry-run import against dev, then Production import (future phase)

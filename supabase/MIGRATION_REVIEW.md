@@ -1,6 +1,6 @@
 # Migration Review Checklist — Korean Reference
 
-> **Status:** Phase 7C-3A complete — local Supabase verified with pgTAP (**68/68** PASS: schema 22, integrity 19, rls 13, conjugation_taxonomy **14**).
+> **Status:** Phase 7C-4B-1R-A4 complete — local pgTAP **72/72** PASS (schema 22, integrity 19, rls 13, conjugation_taxonomy 14, part_of_speech 4). Remote dev + prod at migration **13/13**.
 
 Last updated: 2026-08-08
 
@@ -10,7 +10,7 @@ Last updated: 2026-08-08
 
 - `supabase start` + `db reset --local`: all migrations 000001–000011 apply cleanly
 - 39 public business tables; 39/39 RLS enabled
-- pgTAP: `schema.test.sql` (22), `integrity.test.sql` (19), `rls.test.sql` (13), `conjugation_taxonomy.test.sql` (14) — **68 total**
+- pgTAP: `schema.test.sql` (22), `integrity.test.sql` (19), `rls.test.sql` (13), `conjugation_taxonomy.test.sql` (14), `part_of_speech.test.sql` (4) — **72 total**
 - No PostgreSQL migration errors (only NOTICE: long trigger name truncation)
 - **Not linked** to remote; no seed
 

@@ -77,7 +77,7 @@ erDiagram
 | slug | text | 唯一，URL 用，如 `deutda` |
 | headword_ko | text | 韩文标准词形 |
 | headword_normalized | text | 标准化形式（搜索用） |
-| part_of_speech | text | 词性，如 `verb`, `noun`, `adjective` |
+| part_of_speech | text | 词性：`verb`, `adjective`, `noun`, `bound_noun`, `adverb`, `particle`, `other` |
 | pronunciation | text | 发音（韩文或描述） |
 | romanization | text | RR 主罗马字（可选；阶段 4.1 起可搜索） |
 | romanization_aliases | text[] | 审核过的备用罗马字（可选） |

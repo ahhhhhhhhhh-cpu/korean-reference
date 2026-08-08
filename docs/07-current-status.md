@@ -1,7 +1,7 @@
 # 当前项目状态（Current Status）
 
-> 文档版本：2.0  
-> 最后更新：2026-08-08（Phase 7C-3C — Migration 12 applied to Production）
+> 文档版本：2.1  
+> 最后更新：2026-08-08（Phase 7C-4B-1R-A4 — bound_noun deployed to Production）
 
 ---
 
@@ -9,10 +9,10 @@
 
 | 项目 | 状态 |
 |------|------|
-| **当前阶段** | Phase 7C-3C — Migration 12 on Production（完成，待 review） |
-| **整体进度** | ~94% |
+| **当前阶段** | Phase 7C-4B-1R-A4 — `bound_noun` schema deployed (local/dev/prod **13/13**) |
+| **整体进度** | ~95% |
 | **工作 branch** | `chore/production-readiness` |
-| **下一任务** | Review Production result → formal Pilot CSV import |
+| **下一任务** | Git checkpoint → approved sense translations (7C-4B-1 cont.) |
 
 ---
 
@@ -28,10 +28,44 @@
 | 7C-3A | Pre-CSV schema correction | ✅ local 完成 | 2026-08-08 |
 | 7C-3B | Migration 12 → remote dev | ✅ 完成 | 2026-08-08 |
 | 7C-3C | Migration 12 → Production | ✅ 完成 | 2026-08-08 |
+| 7C-4B-1R-A2 | bound_noun + Pilot 시간 split | ✅ local | 2026-08-08 |
+| 7C-4B-1R-A3 | Migration 13 → remote dev | ✅ 完成 | 2026-08-08 |
+| 7C-4B-1R-A4 | Migration 13 → Production | ✅ 完成 | 2026-08-08 |
 
 ---
 
-## 3. Phase 7C-3A（local）
+## 3. Phase 7C-4B-1R-A2 / A3 / A4（bound_noun schema）
+
+- [x] Migration `20260808000013_add_bound_noun_part_of_speech.sql` — **local / dev / prod 均为 13/13**
+- [x] Canonical POS 新增 `bound_noun`（TS / CSV validator / UI filter labels）
+- [x] Pilot `data/pilot/entry/`（**local CSV only**）：시간 → `entry-sigan-time`（noun）+ `entry-sigan-hour`（bound_noun）；**32** entries / **50** senses
+- [x] Formal Pilot content **未** import；sense_translations 仍待 review
+- [x] Production formal lexical content **仍为空**（6 system `conjugation_forms` only）
+- [x] Feedback **仍 disabled**
+
+### Phase 7C-4B-1R-A3（remote dev）
+
+- [x] CLI linked → `korean-reference-dev`；dry-run 仅 migration 13；`seeds: []`
+- [x] Synthetic content intact（8 published、`test-draft`、`test-review`、8 `conjugation_results`）
+- [x] 无 formal `sigan-time` / `sigan-hour` 远程行
+
+### Phase 7C-4B-1R-A4（Production）
+
+- [x] CLI relink → `korean-reference-prod`（`rpykfrvcynpwmbkogiou`）；dev **未** modified
+- [x] Pre-apply：migrations 01–12；formal content **空**
+- [x] Dry-run：仅 migration 13；`seeds: []`
+- [x] Migration 13 applied；Production **13/13**
+- [x] Formal content **仍为空**；synthetic markers absent；RLS 39/39；feedback / `submit_feedback` unchanged
+- [x] Safety relink → `korean-reference-dev`
+
+### 明确不做（7C-4B-1R-A2–A4）
+
+- remote seed / formal CSV import
+- Git commit / push
+
+---
+
+## 4. Phase 7C-3A（local）
 
 - [x] Migration `20260808000012_conjugation_taxonomy_and_system_forms.sql`
 - [x] `irregular_type` taxonomy: `ㄷ` `ㅂ` `ㅅ` `ㅎ` `르` `러` `여` `우`
@@ -108,8 +142,8 @@
 
 | 环境 | Supabase | 数据 | Vercel |
 |------|----------|------|--------|
-| Preview / dev | `korean-reference-dev` | TEST / SYNTHETIC（schema **12/12**） | Preview env ✅ |
-| Production DB | `korean-reference-prod` | **空**（schema **12/12**；6 system forms only） | **未配置** |
+| Preview / dev | `korean-reference-dev` | TEST / SYNTHETIC（schema **13/13**；`bound_noun` ✅） | Preview env ✅ |
+| Production DB | `korean-reference-prod` | **空**（schema **13/13**；6 system forms only；`bound_noun` ✅） | **未配置** |
 
 ---
 
@@ -126,6 +160,8 @@
 
 | 日期 | 更新内容 |
 |------|----------|
+| 2026-08-08 | Phase 7C-4B-1R-A4: migration 13 applied to `korean-reference-prod` (content still empty) |
+| 2026-08-08 | Phase 7C-4B-1R-A3: migration 13 applied to `korean-reference-dev` |
 | 2026-08-08 | Phase 7C-3C: migration 12 applied to `korean-reference-prod` (content still empty) |
 | 2026-08-08 | Phase 7C-3B: migration 12 applied to `korean-reference-dev` |
 | 2026-08-08 | Phase 7C-3A (local): irregular taxonomy + system conjugation forms migration |

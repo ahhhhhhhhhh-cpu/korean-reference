@@ -1,6 +1,6 @@
 # Supabase Migrations — Korean Reference
 
-> **Status:** Phase 7C-3C complete — **`korean-reference-prod`** schema **12/12** (system conjugation forms only; no formal content). **`korean-reference-dev`** schema **12/12** (synthetic seed).
+> **Status:** Phase 7C-4B-1R-A4 complete — **`korean-reference-prod`** and **`korean-reference-dev`** schema **13/13** (`bound_noun` deployed). Production: system conjugation forms only; **no formal content**.
 
 ## Migration order
 
@@ -20,17 +20,20 @@ Apply in timestamp order under `supabase/migrations/`:
 | 10 | `20260806000010_rls_and_grants.sql` | RLS policies, explicit GRANTs, `submit_feedback()` RPC |
 | 11 | `20260806000011_phase_6a1_integrity_security_revisions.sql` | Consolidation marker (no SQL) |
 | 12 | `20260808000012_conjugation_taxonomy_and_system_forms.sql` | Irregular taxonomy + system conjugation forms |
+| 13 | `20260808000013_add_bound_noun_part_of_speech.sql` | Add `bound_noun` to `entries.part_of_speech` (schema only; **13/13** local/dev/prod) |
 
 **Total tables:** 39
 
 Phase 7C-3A–3C: migration 12 updates `irregular_type` CHECK constraints and bootstraps six `conjugation_forms` as **system reference data** (not seed). Applied to **dev** (7C-3B) and **prod** (7C-3C).
+
+Phase 7C-4B-1R-A3–A4: migration 13 adds `bound_noun` to `entries.part_of_speech` CHECK. Applied to **dev** (A3) and **prod** (A4). Schema only — no lexical content.
 
 See **`MIGRATION_REVIEW.md`** for the full audit checklist.
 
 ## Remote dev (`korean-reference-dev`)
 
 - **Linked** via `npx supabase link --project-ref <ref>`
-- Schema deployed with `npx supabase db push` (**12/12** migrations after Phase 7C-3B)
+- Schema deployed with `npx supabase db push` (**13/13** migrations after Phase 7C-4B-1R-A3)
 - Synthetic seed: `npx supabase db push --include-seed` (TEST/SYNTHETIC DATA only)
 - **Not** production; **no** formal vocabulary imported
 
@@ -78,7 +81,7 @@ Approximate coverage:
 
 ```bash
 npx supabase db reset --local
-npx supabase test db --local    # 68/68 PASS
+npx supabase test db --local    # 72/72 PASS
 ```
 
 ### Remote verification scripts
@@ -89,7 +92,7 @@ Optional read-only SQL under `supabase/scripts/` for post-deploy checks.
 
 | Target | Status |
 |--------|--------|
-| Local (`test db --local`) | **68/68** PASS — `schema` 22, `integrity` 19, `rls` 13, `conjugation_taxonomy` 14 |
+| Local (`test db --local`) | **72/72** PASS — `schema` 22, `integrity` 19, `rls` 13, `conjugation_taxonomy` 14, `part_of_speech` 4 |
 | Linked remote | CLI test runner lacks `extensions` schema USAGE for pgTAP; schema verified via `db query` + local pgTAP |
 
 ## Security notes
@@ -104,7 +107,7 @@ Optional read-only SQL under `supabase/scripts/` for post-deploy checks.
 
 See **`docs/08-production-readiness.md`** and **`data/README.md`**.
 
-- Production schema **12/12** on both dev and prod; formal content **not imported**
+- Production schema **13/13** on both dev and prod; formal content **not imported**
 - Formal CSV templates + validator (`npm run content:validate`)
 - Dry-run importer only (`npm run content:dry-run`)
 

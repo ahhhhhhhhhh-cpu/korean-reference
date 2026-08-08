@@ -229,6 +229,7 @@
       "verb": "動詞",
       "adjective": "形容詞",
       "noun": "名詞",
+      "bound_noun": "依存名詞",
       "adverb": "副詞",
       "particle": "助詞",
       "other": "その他"

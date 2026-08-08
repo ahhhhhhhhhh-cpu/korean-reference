@@ -229,6 +229,7 @@
       "verb": "Verb",
       "adjective": "Adjective",
       "noun": "Noun",
+      "bound_noun": "Bound noun",
       "adverb": "Adverb",
       "particle": "Particle",
       "other": "Other"

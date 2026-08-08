@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { validateContentDirectory } from "./validate-content";
@@ -49,6 +51,37 @@ describe("validateContentDirectory", () => {
     expect(result.errors.some((e) => e.message.includes("Invalid part_of_speech"))).toBe(
       true,
     );
+  });
+
+  it("accepts bound_noun as part_of_speech", () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pos-bound-noun-"));
+    fs.writeFileSync(
+      path.join(dir, "entries.csv"),
+      [
+        "import_key,slug,headword,headword_normalized,part_of_speech,status",
+        "entry-test-bound,test-bound,시,시,bound_noun,draft",
+      ].join("\n"),
+    );
+    fs.writeFileSync(
+      path.join(dir, "senses.csv"),
+      [
+        "import_key,entry_import_key,sense_order,is_primary,status",
+        "sense-test-bound-01,entry-test-bound,1,true,draft",
+      ].join("\n"),
+    );
+    fs.writeFileSync(
+      path.join(dir, "sense_translations.csv"),
+      [
+        "import_key,sense_import_key,locale,short_definition,status",
+        "st-test-bound-en,sense-test-bound-01,en,hour unit,draft",
+      ].join("\n"),
+    );
+
+    const result = validateContentDirectory(dir);
+    expect(result.errors.some((e) => e.message.includes("Invalid part_of_speech"))).toBe(
+      false,
+    );
+    expect(result.ok).toBe(true);
   });
 
   it("unresolved relation fails", () => {

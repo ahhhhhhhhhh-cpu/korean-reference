@@ -24,6 +24,7 @@ export const PARTS_OF_SPEECH = [
   "verb",
   "adjective",
   "noun",
+  "bound_noun",
   "adverb",
   "particle",
   "other",
