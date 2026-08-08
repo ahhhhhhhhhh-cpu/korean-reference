@@ -1,6 +1,6 @@
 # Supabase Migrations — Korean Reference
 
-> **Status:** Phase 6D complete — linked to **`korean-reference-dev`** (remote dev). Production not connected.
+> **Status:** Phase 7B complete — **`korean-reference-prod`** schema deployed (11/11 migrations, no seed). **`korean-reference-dev`** unchanged.
 
 ## Migration order
 

@@ -1,23 +1,35 @@
 # Production Readiness — Korean Reference
 
-> **Phase 7A** — architecture, deployment runbook, formal content pipeline scaffolding.  
-> **Status:** Production Supabase **not created** in this phase.
+> **Phase 7A–7B** — architecture, deployment runbook, formal content pipeline scaffolding.  
+> **Status:** `korean-reference-prod` schema deployed (Phase 7B). No content. Vercel Production not configured.
 
 ---
 
 ## 1. Architecture
 
-### Production (future)
+### Production (deployed — Phase 7B)
 
 ```text
-GitHub main
+GitHub main                    (not merged yet)
       ↓
-Vercel Production
+Vercel Production              (not configured yet)
       ↓
-korean-reference-prod   (not created yet)
+korean-reference-prod          ✅ schema deployed
       ↓
-Formal editorial content
+(empty — no formal or synthetic content)
 ```
+
+**Phase 7B verified (2026-08-08):**
+
+| Check | Result |
+|-------|--------|
+| Migrations applied | 11/11 local = remote |
+| `public` business tables | 39 |
+| RLS enabled | 39/39 |
+| Content rows | 0 (entries, examples, modules) |
+| Synthetic seed slugs | none (`test-draft`, `hakgyo`, etc.) |
+| Seed applied | **No** |
+| `korean-reference-dev` modified | **No** |
 
 ### Preview / development (current)
 
@@ -53,7 +65,9 @@ Vercel **Production** scope only (when approved):
 
 Feedback is not enabled; the app does not need elevated keys.
 
-**Do not** copy Preview/dev variables to Production until `korean-reference-prod` exists and is reviewed.
+**Do not** copy Preview/dev variables to Production until formal content review is complete and Vercel Production deploy is approved.
+
+Production Supabase project exists; credentials are in Supabase Dashboard only — **not** in Git or this doc.
 
 ---
 
@@ -200,10 +214,11 @@ Use before merging preview work to `main` and cutting Production:
 
 ## 9. Next step after Phase 7A
 
-When approved:
+~~When approved:~~
 
-1. Create **`korean-reference-prod`** Supabase project
-2. Run Production migration runbook (§3)
-3. Author formal CSV from `data/templates/`
-4. Enable live import (future phase)
-5. Merge to `main` + configure Vercel Production env
+1. ~~Create **`korean-reference-prod`** Supabase project~~ ✅ Phase 7B
+2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B
+3. **Formal Content Review + Production Import Preparation** ← current
+4. Author formal CSV from `data/templates/`
+5. Enable live import (future phase)
+6. Merge to `main` + configure Vercel Production env
