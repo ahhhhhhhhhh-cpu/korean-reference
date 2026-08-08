@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "content:validate": "tsx scripts/content/validate-content-cli.ts",
+    "content:dry-run": "tsx scripts/content/import-content.ts --dry-run"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -34,6 +36,7 @@
     "eslint-config-next": "16.2.12",
     "supabase": "^2.111.0",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

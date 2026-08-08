@@ -44,7 +44,18 @@ Legacy local CLI stack may use `NEXT_PUBLIC_SUPABASE_ANON_KEY` instead of publis
 
 ## Phase 6C — local test seed (synthetic)
 
-`supabase/seed.sql` provides **TEST / SYNTHETIC DATA** — not production vocabulary.
+`supabase/seed.sql` = **local/dev synthetic test data** — **not** formal content, **not** a production seed.
+
+The file opens with an explicit banner: **TEST / SYNTHETIC DATA ONLY — DO NOT APPLY TO PRODUCTION**.
+
+Allowed usage:
+
+- Local reset: `npx supabase db reset --local`
+- Remote **dev** only: `npx supabase db push --include-seed` on `korean-reference-dev`
+
+**Never** run `--include-seed` against Production (`korean-reference-prod`).
+
+Formal editorial content uses the CSV pipeline under `data/` (see `data/README.md`).
 
 Approximate coverage:
 
@@ -86,20 +97,14 @@ Optional read-only SQL under `supabase/scripts/` for post-deploy checks.
 - **No** `SUPABASE_SECRET_KEY` / service_role in app
 - `.env.local` gitignored — never commit keys or DB password
 
-## Next: Phase 6E / 7
+## Next: Phase 7
 
-### Phase 6E — Vercel Preview (in progress)
+### Phase 7A — Production readiness (in progress)
 
-1. Set real GitHub `origin` remote (currently placeholder in some clones)
-2. Push branch → trigger Vercel Preview
-3. Configure **Preview-only** env vars:
-   - `NEXT_PUBLIC_SUPABASE_URL` → `korean-reference-dev`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` → `sb_publishable_...`
-   - `DATA_SOURCE=supabase`
-4. Spot-check Preview URL (`/en`, `/zh`, `/ja`, modules, search, RLS)
+See **`docs/08-production-readiness.md`** and **`data/README.md`**.
 
-Do **not** sync Preview env vars to Production yet.
+- Production architecture + deployment runbook (no prod Supabase yet)
+- Formal CSV templates + validator (`npm run content:validate`)
+- Dry-run importer only (`npm run content:dry-run`)
 
-### Phase 7 — Production readiness
-
-Production Supabase + formal content (when approved).
+Do **not** merge to `main` or configure Production Supabase until checklist complete.

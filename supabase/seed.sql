@@ -1,6 +1,11 @@
--- TEST / SYNTHETIC DATA - not production
+-- ============================================================
+-- TEST / SYNTHETIC DATA ONLY
+-- DEVELOPMENT AND TEST ENVIRONMENTS ONLY
+-- DO NOT APPLY THIS FILE TO PRODUCTION
+-- ============================================================
 -- Korean Reference Phase 6C local test seed.
 -- Synthetic vocabulary for adapter and locale-fallback testing only.
+-- Never use `db push --include-seed` against korean-reference-prod.
 
 BEGIN;
 

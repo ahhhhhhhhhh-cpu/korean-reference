@@ -1,7 +1,7 @@
 # 当前项目状态（Current Status）
 
-> 文档版本：1.5  
-> 最后更新：2026-08-08（Phase 6E — Vercel Framework Preset 修正为 Next.js）
+> 文档版本：1.6  
+> 最后更新：2026-08-08（Phase 7A — Production readiness scaffolding）
 
 ---
 
@@ -9,11 +9,10 @@
 
 | 项目 | 状态 |
 |------|------|
-| **当前阶段** | Phase 6E — Git-based Preview 部署验证中 |
-| **整体进度** | ~82% |
-| **阻塞项** | Deployment Protection 可能阻挡公网自动化测试 |
-| **工作方式** | Git push `preview/phase-6e` → Vercel Preview（Next.js preset）→ `korean-reference-dev` |
-| **下一任务** | 确认新 Git Preview URL + 公网 spot-check |
+| **当前阶段** | Phase 7A — Production Readiness + Formal Content Pipeline Scaffolding |
+| **整体进度** | ~85% |
+| **工作 branch** | `chore/production-readiness`（自 `preview/phase-6e`） |
+| **下一任务** | Create `korean-reference-prod` + deploy schema（需人工批准） |
 
 ---
 
@@ -23,47 +22,45 @@
 |------|------|------|----------|
 | 6C | 测试 Seed + Supabase Adapter | ✅ 完成 | 2026-08-07 |
 | 6D | 远程 dev 接入 | ✅ 完成 | 2026-08-07 |
-| 6E | Vercel Preview 集成 | 🔄 进行中 | — |
+| 6E | Vercel Preview 集成 | ✅ 完成 | 2026-08-08 |
+| 7A | Production readiness scaffolding | ✅ 完成 | 2026-08-08 |
 
 ---
 
-## 3. Phase 6E 状态
+## 3. Phase 7A 交付物
 
-### 已完成（本地）
+- [x] `docs/08-production-readiness.md` — 架构、runbook、merge checklist
+- [x] `data/templates/` — 空 CSV headers（34 files）
+- [x] `data/fixtures/` — 合成 validator 测试包
+- [x] `scripts/content/validate-content.ts` — 无 DB 校验器
+- [x] `scripts/content/import-content.ts` — `--dry-run` only
+- [x] `npm run content:validate` / `content:dry-run`
+- [x] `supabase/seed.sql` 强化 synthetic 警告
 
-- [x] Git 安全检查 — 无 secret 被 tracked；`.env.local` / `supabase/.temp/` 已忽略
-- [x] `npm run lint` PASS
-- [x] Vitest **58/58** PASS
-- [x] `npm run build` PASS（连接 `korean-reference-dev` synthetic data）
-- [x] Publishable key 模式（无 service_role / secret）
+### 明确不做（Phase 7A）
 
-### 待完成（需人工）
-
-- [x] Vercel Project 创建 + link
-- [x] GitHub repository 连接 Vercel（2026-08-08）
-- [ ] Git-based Preview Deployment 公网 spot-check
-
-### 明确不做
-
-- Production Supabase / Production promote
+- Production Supabase 创建/连接
 - 正式词库导入
-- Feedback 写入开放
-- 为 linked pgTAP 修改业务 schema
+- merge 到 `main`
+- Feedback 启用
+- `vercel --prod`
 
 ---
 
 ## 4. Technical debt（non-blocking）
 
-**Remote hosted pgTAP：** Supabase 托管环境的 `extensions.pgtap` + `search_path=""` 导致 `test db --linked` 无法运行。验证依据：
-
-- local pgTAP 54/54 PASS
-- remote schema / RLS / manual + Preview 验证
+- Remote hosted pgTAP（见 Phase 6D 文档）
+- Accidental early Production Vercel deployment（已记录，不依赖）
 
 ---
 
 ## 5. 数据说明
 
-当前远程 `korean-reference-dev` 全部为 **TEST / SYNTHETIC DATA**，非正式词库。
+| 环境 | 数据 |
+|------|------|
+| `korean-reference-dev` | TEST / SYNTHETIC（seed.sql） |
+| Production | 尚未创建 |
+| Formal CSV | 模板已就绪，内容未开始 |
 
 ---
 
@@ -71,7 +68,6 @@
 
 | 日期 | 更新内容 |
 |------|----------|
-| 2026-08-08 | Phase 6E：Vercel Framework Preset 修正为 Next.js |
-| 2026-08-08 | Phase 6E：GitHub ↔ Vercel 连接完成；触发 Git Preview deploy |
-| 2026-08-07 | Phase 6D：远程 dev 接入 + synthetic seed |
-| 2026-08-07 | Phase 6C：测试 Seed + Supabase Adapter |
+| 2026-08-08 | Phase 7A：Production readiness + CSV/import scaffolding |
+| 2026-08-08 | Phase 6E COMPLETE |
+| 2026-08-07 | Phase 6D：远程 dev 接入 |
