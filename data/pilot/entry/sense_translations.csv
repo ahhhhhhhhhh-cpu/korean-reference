@@ -1,1 +1,151 @@
 import_key,sense_import_key,locale,short_definition,definition,usage_note,nuance_note,status
+st-sense-hakgyo-01-en,sense-hakgyo-01,en,school,An institution where students receive organized education according to a curriculum and set system.,,,draft
+st-sense-hakgyo-01-zh,sense-hakgyo-01,zh,学校,按照一定的教育目标、课程和制度对学生进行教育的机构。,,,draft
+st-sense-hakgyo-01-ja,sense-hakgyo-01,ja,学校,一定の教育目的・教育課程・制度に基づいて学生や生徒を教育する機関。,,,draft
+st-sense-haksaeng-01-en,sense-haksaeng-01,en,student,A person who attends a school or other educational institution and studies there.,,,draft
+st-sense-haksaeng-01-zh,sense-haksaeng-01,zh,学生,在学校等教育机构就读和学习的人。,,,draft
+st-sense-haksaeng-01-ja,sense-haksaeng-01,ja,学生・生徒,学校などの教育機関に通って学ぶ人。,,,draft
+st-sense-saram-01-en,sense-saram-01,en,person; human being,"A human being who thinks, communicates, and lives as part of society.",,,draft
+st-sense-saram-01-zh,sense-saram-01,zh,人；人类个体,能够思考、交流并生活在社会中的人类个体。,,,draft
+st-sense-saram-01-ja,sense-saram-01,ja,人；人間,考えたり人と意思を伝え合ったりしながら、社会の中で暮らす人間。,,,draft
+st-sense-saram-02-en,sense-saram-02,en,person from/of …,"A person who comes from a particular place or belongs to a particular family, group, or organization.",,,draft
+st-sense-saram-02-zh,sense-saram-02,zh,……人；……的人,来自某个地区，或属于某个家庭、团体、组织等的人。,,,draft
+st-sense-saram-02-ja,sense-saram-02,ja,～の人；～出身の人,ある地域の出身者、または特定の家・集団・組織などに属する人。,,,draft
+st-sense-saram-03-en,sense-saram-03,en,character; personality,A person's character or personal qualities.,,,draft
+st-sense-saram-03-zh,sense-saram-03,zh,性格；人品,一个人的性格或人品。,,,draft
+st-sense-saram-03-ja,sense-saram-03,ja,人柄；性格,その人の性格や人柄。,,,draft
+st-sense-saram-04-en,sense-saram-04,en,person (with numbers),Used after an expression of quantity to refer to that number of people.,,,draft
+st-sense-saram-04-zh,sense-saram-04,zh,人（用于数量表达）,用在表示数量的词语后，指相应数量的人。,,,draft
+st-sense-saram-04-ja,sense-saram-04,ja,人（数量表現）,数量を表す語の後に用い、その人数の人を指す。,,,draft
+st-sense-gada-01-en,sense-gada-01,en,go,To move from one place to another.,,,draft
+st-sense-gada-01-zh,sense-gada-01,zh,去,从一个地方移动到另一个地方。,,,draft
+st-sense-gada-01-ja,sense-gada-01,ja,行く,ある場所から別の場所へ移動する。,,,draft
+st-sense-deutda-01-en,sense-deutda-01,en,hear; listen,"To perceive a sound with the ears or pay attention to speech, music, or other sounds.",,,draft
+st-sense-deutda-01-zh,sense-deutda-01,zh,听；听到,用耳朵听到声音，或有意识地听别人说话、音乐等。,,,draft
+st-sense-deutda-01-ja,sense-deutda-01,ja,聞く・聴く,耳で音を感じ取ったり、人の話や音楽などに耳を傾けたりする。,,,draft
+st-sense-chingu-01-en,sense-chingu-01,en,friend,A person with whom one has a close and friendly relationship.,,,draft
+st-sense-chingu-01-zh,sense-chingu-01,zh,朋友,与自己关系亲近、友好相处的人。,,,draft
+st-sense-chingu-01-ja,sense-chingu-01,ja,友達,親しく付き合っている人。,,,draft
+st-sense-chingu-02-en,sense-chingu-02,en,fellow; person (informal),"An informal way of referring to someone about the same age or younger; depending on tone, it may sound friendly or mildly dismissive.",,,draft
+st-sense-chingu-02-zh,sense-chingu-02,zh,这人；这家伙（口语）,对年龄相仿或比自己小的人使用的非正式称呼；根据语气可以显得亲近，也可能略带轻慢。,,,draft
+st-sense-chingu-02-ja,sense-chingu-02,ja,この人；やつ（くだけた言い方）,同年代か年下の人をくだけて指す言い方で、文脈によって親しみを表すことも、ややぞんざいに聞こえることもある。,,,draft
+st-sense-sigan-time-01-en,sense-sigan-time-01,en,time; period,A period or amount of time from one point to another.,,,draft
+st-sense-sigan-time-01-zh,sense-sigan-time-01,zh,时间；一段时间,从某一时刻到另一时刻之间的一段时间或其长短。,,,draft
+st-sense-sigan-time-01-ja,sense-sigan-time-01,ja,時間；期間,ある時点から別の時点までの時間、またはその長さ。,,,draft
+st-sense-sigan-hour-01-en,sense-sigan-hour-01,en,hour,A bound noun used after a number to express a length of time in units of sixty minutes.,,,draft
+st-sense-sigan-hour-01-zh,sense-sigan-hour-01,zh,小时,用在数词后，以六十分钟为一个单位表示时间长度的依存名词。,,,draft
+st-sense-sigan-hour-01-ja,sense-sigan-hour-01,ja,時間,数を表す語の後に付き、60分を1単位として時間の長さを表す依存名詞。,,,draft
+st-sense-mul-01-en,sense-mul-01,en,water,"The liquid used for drinking, washing, cooking, and many other everyday purposes.",,,draft
+st-sense-mul-01-zh,sense-mul-01,zh,水,用于饮用、清洗、烹饪等各种日常用途的液体。,,,draft
+st-sense-mul-01-ja,sense-mul-01,ja,水,飲用・洗浄・調理など、日常のさまざまな用途に使われる液体。,,,draft
+st-sense-mul-02-en,sense-mul-02,en,water; body of water,"Water forming or filling a natural area such as a river, lake, or sea.",,,draft
+st-sense-mul-02-zh,sense-mul-02,zh,水；水域,河流、湖泊、海洋等自然水域中的水，或这样的水域。,,,draft
+st-sense-mul-02-ja,sense-mul-02,ja,水；水域,川・湖・海などの自然の場所に広がっている水、またはそのような水域。,,,draft
+st-sense-meokda-01-en,sense-meokda-01,en,eat,"To put food into the mouth and swallow it, chewing it when necessary.",,,draft
+st-sense-meokda-01-zh,sense-meokda-01,zh,吃,把食物放入口中，必要时经过咀嚼后咽下。,,,draft
+st-sense-meokda-01-ja,sense-meokda-01,ja,食べる,食べ物を口に入れ、必要に応じてかんで飲み込む。,,,draft
+st-sense-meokda-02-en,sense-meokda-02,en,take (medicine),"To take medicine, especially by swallowing it.",,,draft
+st-sense-meokda-02-zh,sense-meokda-02,zh,吃药；服用,服用药物。,,,draft
+st-sense-meokda-02-ja,sense-meokda-02,ja,薬を飲む；服用する,薬を服用する。,,,draft
+st-sense-boda-01-en,sense-boda-01,en,see; look at,To perceive the existence or appearance of something with the eyes.,,,draft
+st-sense-boda-01-zh,sense-boda-01,zh,看；看见,用眼睛看到某物的存在或外观。,,,draft
+st-sense-boda-01-ja,sense-boda-01,ja,見る；目にする,目で物の存在や外見をとらえる。,,,draft
+st-sense-boda-02-en,sense-boda-02,en,watch; view,"To look at and enjoy or appreciate something such as a movie, performance, or television program.",,,draft
+st-sense-boda-02-zh,sense-boda-02,zh,看；观看,观看并欣赏电影、演出、电视节目等。,,,draft
+st-sense-boda-02-ja,sense-boda-02,ja,見る；鑑賞する,映画・公演・テレビ番組などを見て楽しんだり鑑賞したりする。,,,draft
+st-sense-boda-03-en,sense-boda-03,en,read; look at,"To read and understand written, pictorial, or symbolic information in something such as a book, newspaper, or map.",,,draft
+st-sense-boda-03-zh,sense-boda-03,zh,看；阅读,阅读并理解书籍、报纸、地图等中的文字、图像或符号。,,,draft
+st-sense-boda-03-ja,sense-boda-03,ja,読む；見る,本・新聞・地図などの文字、図、記号を見て内容を理解する。,,,draft
+st-sense-boda-04-en,sense-boda-04,en,check; look at,"To examine something in order to find out its content, condition, or other information.",,,draft
+st-sense-boda-04-zh,sense-boda-04,zh,查看；检查,为了解内容、状态或其他信息而查看某物。,,,draft
+st-sense-boda-04-ja,sense-boda-04,ja,確認する；見る,内容や状態などを知るために、対象を見て確かめる。,,,draft
+st-sense-boda-05-en,sense-boda-05,en,take an exam,To take an examination or test used to assess one's knowledge or ability.,,,draft
+st-sense-boda-05-zh,sense-boda-05,zh,考试；参加考试,参加用于考查知识或能力的考试。,,,draft
+st-sense-boda-05-ja,sense-boda-05,ja,試験を受ける,知識や能力を測るための試験を受ける。,,,draft
+st-sense-baeuda-01-en,sense-baeuda-01,en,learn; be taught,"To acquire knowledge, a skill, or a way of doing something through instruction or training.",,,draft
+st-sense-baeuda-01-zh,sense-baeuda-01,zh,学习；学会,通过教导或训练掌握知识、技能或做事的方法。,,,draft
+st-sense-baeuda-01-ja,sense-baeuda-01,ja,習う；学ぶ,教わったり訓練を受けたりして、知識・技術・やり方などを身につける。,,,draft
+st-sense-baeuda-02-en,sense-baeuda-02,en,learn from experience,To come to understand or acquire something through one's experiences.,,,draft
+st-sense-baeuda-02-zh,sense-baeuda-02,zh,从经历中学到；领悟,通过自己的经历理解或学到某种道理、态度等。,,,draft
+st-sense-baeuda-02-ja,sense-baeuda-02,ja,経験から学ぶ,経験を通して、考え方や教訓などを理解したり身につけたりする。,,,draft
+st-sense-gongbuhada-01-en,sense-gongbuhada-01,en,study,"To study a subject, language, skill, or other field in order to gain knowledge.",,,draft
+st-sense-gongbuhada-01-zh,sense-gongbuhada-01,zh,学习；用功,学习学科、语言、技能等以获得知识。,,,draft
+st-sense-gongbuhada-01-ja,sense-gongbuhada-01,ja,勉強する,学問・言語・技術などを学び、知識を身につける。,,,draft
+st-sense-geotda-01-en,sense-geotda-01,en,walk,To move from one place to another on foot by taking steps.,,,draft
+st-sense-geotda-01-zh,sense-geotda-01,zh,走；步行,双脚交替迈步，使身体从一个地方移动到另一个地方。,,,draft
+st-sense-geotda-01-ja,sense-geotda-01,ja,歩く,足を交互に動かして、一つの場所から別の場所へ移動する。,,,draft
+st-sense-dopda-01-en,sense-dopda-01,en,help; assist,To give someone support so that they can do something more easily or deal with a difficulty.,,,draft
+st-sense-dopda-01-zh,sense-dopda-01,zh,帮助；协助,给予他人支持，使其更容易完成某事或解决困难。,,,draft
+st-sense-dopda-01-ja,sense-dopda-01,ja,助ける；手伝う,相手に力を貸し、物事を行ったり困難を解決したりしやすくする。,,,draft
+st-sense-moreuda-01-en,sense-moreuda-01,en,not know; not understand,"To have no knowledge or understanding of a person, thing, fact, reason, or similar matter.",,,draft
+st-sense-moreuda-01-zh,sense-moreuda-01,zh,不知道；不了解,对人、事物、事实、原因等没有相关知识或不能理解。,,,draft
+st-sense-moreuda-01-ja,sense-moreuda-01,ja,知らない；分からない,人・物・事実・理由などについて知識がなかったり、理解できなかったりする。,,,draft
+st-sense-moreuda-02-en,sense-moreuda-02,en,may; might; not be sure,Used in constructions such as `-(으)ㄹ지 모르다` when the speaker is unsure about something or presents it as a possibility.,,,draft
+st-sense-moreuda-02-zh,sense-moreuda-02,zh,说不准；可能,用于 `-(으)ㄹ지 모르다` 等结构，表示说话人对某事不确定，或认为某事有可能发生。,,,draft
+st-sense-moreuda-02-ja,sense-moreuda-02,ja,～かもしれない；分からない,`-(으)ㄹ지 모르다` などの形で、ある事柄について確信がないことや、その可能性があることを表す。,,,draft
+st-sense-jitda-01-en,sense-jitda-01,en,make; build,"To make something such as food, clothing, or a building using the necessary materials.",,,draft
+st-sense-jitda-01-zh,sense-jitda-01,zh,做；制作；建造,使用所需的材料制作饭菜、衣服、建筑物等。,,,draft
+st-sense-jitda-01-ja,sense-jitda-01,ja,作る；建てる,必要な材料を使って、食事・衣服・建物などを作る。,,,draft
+st-sense-sseuda-write-01-en,sense-sseuda-write-01,en,write,"To form letters or words in writing, or to express content in written form.",,,draft
+st-sense-sseuda-write-01-zh,sense-sseuda-write-01,zh,写；书写,写出文字、词语等，或用文字把内容表达出来。,,,draft
+st-sense-sseuda-write-01-ja,sense-sseuda-write-01,ja,書く,文字や語を書いたり、内容を文章として表したりする。,,,draft
+st-sense-sseuda-use-01-en,sense-sseuda-use-01,en,use,"To use a thing, material, tool, method, or other means for a particular purpose.",,,draft
+st-sense-sseuda-use-01-zh,sense-sseuda-use-01,zh,使用；用,为了某种目的使用物品、材料、工具、方法或其他手段。,,,draft
+st-sense-sseuda-use-01-ja,sense-sseuda-use-01,ja,使う；用いる,ある目的のために、物・材料・道具・方法などを利用する。,,,draft
+st-sense-salda-01-en,sense-salda-01,en,live; reside,To have one's home in or stay regularly at a particular place.,,,draft
+st-sense-salda-01-zh,sense-salda-01,zh,住；居住,在某个地方居住或长期生活。,,,draft
+st-sense-salda-01-ja,sense-salda-01,ja,住む；暮らす,ある場所に住んだり、そこで生活したりする。,,,draft
+st-sense-jota-01-en,sense-jota-01,en,good; pleasing,"To be good, satisfactory, or pleasing to someone. With a liked thing marked by `이/가`, it can also express that someone likes it.",,,draft
+st-sense-jota-01-zh,sense-jota-01,zh,好；喜欢,表示某事物很好、令人满意或合心意；喜欢某事物时，该事物通常用 `이/가` 标记。,,,draft
+st-sense-jota-01-ja,sense-jota-01,ja,良い；気に入っている,物事が良好で満足できたり、気に入ったりしていることを表す。好む対象には通常 `이/가` が付く。,,,draft
+st-sense-keuda-big-01-en,sense-keuda-big-01,en,big; large,"To be greater than usual in size, length, width, height, volume, or similar dimensions.",,,draft
+st-sense-keuda-big-01-zh,sense-keuda-big-01,zh,大,大小、长度、宽度、高度、体积等超过一般程度。,,,draft
+st-sense-keuda-big-01-ja,sense-keuda-big-01,ja,大きい,大きさ・長さ・幅・高さ・体積などが普通より大きい。,,,draft
+st-sense-jakda-01-en,sense-jakda-01,en,small; little,"To be less than usual in size, length, width, height, volume, or similar dimensions.",,,draft
+st-sense-jakda-01-zh,sense-jakda-01,zh,小,大小、长度、宽度、高度、体积等小于一般程度。,,,draft
+st-sense-jakda-01-ja,sense-jakda-01,ja,小さい,大きさ・長さ・幅・高さ・体積などが普通より小さい。,,,draft
+st-sense-chupda-01-en,sense-chupda-01,en,cold,For the weather or surrounding conditions to be cold enough that a person feels cold.,,,draft
+st-sense-chupda-01-zh,sense-chupda-01,zh,冷；寒冷,气温或周围环境较冷，使人感到寒冷。,,,draft
+st-sense-chupda-01-ja,sense-chupda-01,ja,寒い,気温や周囲の環境が低温で、人が寒さを感じる。,,,draft
+st-sense-ppareuda-01-en,sense-ppareuda-01,en,fast; quick,"To take little time to move, act, or for something to happen or progress.",,,draft
+st-sense-ppareuda-01-zh,sense-ppareuda-01,zh,快；迅速,移动、行动，或某件事情发生和进行所需的时间很短。,,,draft
+st-sense-ppareuda-01-ja,sense-ppareuda-01,ja,速い；素早い,移動・動作、または物事の進行にかかる時間が短い。,,,draft
+st-sense-geureota-01-en,sense-geureota-01,en,be so; be like that,"For a state, appearance, situation, or quality to be as previously mentioned or indicated.",,,draft
+st-sense-geureota-01-zh,sense-geureota-01,zh,那样；是那样,表示状态、样子、情况或性质等与前面所说或所指的一样。,,,draft
+st-sense-geureota-01-ja,sense-geureota-01,ja,そうだ；そのようだ,状態・様子・事情・性質などが、前に述べたことや示された内容と同じである。,,,draft
+st-sense-hayata-01-en,sense-hayata-01,en,white; pale,"To be bright white like snow or milk, or for a person's face to become pale from fear, cold, shock, or similar causes.",,,draft
+st-sense-hayata-01-zh,sense-hayata-01,zh,白；苍白,像雪或牛奶一样洁白，也可指人的脸因害怕、寒冷、受到惊吓等而变得苍白。,,,draft
+st-sense-hayata-01-ja,sense-hayata-01,ja,白い；青白い,雪や牛乳のように明るく白い、または恐怖・寒さ・驚きなどで顔色が青白くなる。,,,draft
+st-sense-eumsik-01-en,sense-eumsik-01,en,food; dish,"Prepared food such as rice, soup, or other dishes eaten as part of a meal.",,,draft
+st-sense-eumsik-01-zh,sense-eumsik-01,zh,饭菜；食物,作为一餐食用的米饭、汤、菜肴等食物。,,,draft
+st-sense-eumsik-01-ja,sense-eumsik-01,ja,料理；食べ物,食事として食べる、ご飯・汁物・おかずなどの料理や食べ物。,,,draft
+st-sense-eumsik-02-en,sense-eumsik-02,en,food and drink,Anything that people eat or drink.,,,draft
+st-sense-eumsik-02-zh,sense-eumsik-02,zh,饮食；食物和饮料,人们吃或喝的各种东西。,,,draft
+st-sense-eumsik-02-ja,sense-eumsik-02,ja,飲食物,人が食べたり飲んだりするもの全般。,,,draft
+st-sense-munhwa-01-en,sense-munhwa-01,en,culture,"The shared ways of life, customs, language, beliefs, arts, institutions, and other practices developed and passed on by a community.",,,draft
+st-sense-munhwa-01-zh,sense-munhwa-01,zh,文化,一个社会或群体共同形成、共享并传承的生活方式、习俗、语言、信仰、艺术、制度等。,,,draft
+st-sense-munhwa-01-ja,sense-munhwa-01,ja,文化,社会や集団が共に築き、共有し、受け継いでいく生活様式・習慣・言語・信仰・芸術・制度など。,,,draft
+st-sense-maeum-01-en,sense-maeum-01,en,mind; heart,"The inner part of a person where thoughts, feelings, and emotions are experienced.",,,draft
+st-sense-maeum-01-zh,sense-maeum-01,zh,内心；心,人产生思想、感受和情绪的内在精神世界。,,,draft
+st-sense-maeum-01-ja,sense-maeum-01,ja,心；内面,人が考えたり、感情や気持ちを感じたりする内面的なところ。,,,draft
+st-sense-maeum-02-en,sense-maeum-02,en,feeling; mood,A person's feeling or emotional state at a particular time.,,,draft
+st-sense-maeum-02-zh,sense-maeum-02,zh,心情；感受,人在某一时刻所处的情绪或感受状态。,,,draft
+st-sense-maeum-02-ja,sense-maeum-02,ja,気持ち；気分,その時に感じている気持ちや感情の状態。,,,draft
+st-sense-maeum-03-en,sense-maeum-03,en,intention; will,"An intention, desire, or determination to do something.",,,draft
+st-sense-maeum-03-zh,sense-maeum-03,zh,心意；意愿；决心,想做某件事的意愿、想法或决心。,,,draft
+st-sense-maeum-03-ja,sense-maeum-03,ja,意思；意向；決意,何かをしようとする意思や意向、決意。,,,draft
+st-sense-maeum-04-en,sense-maeum-04,en,nature; character,A person's natural disposition or character.,,,draft
+st-sense-maeum-04-zh,sense-maeum-04,zh,性情；性格,一个人本身所具有的性情或性格。,,,draft
+st-sense-maeum-04-ja,sense-maeum-04,ja,性格；人柄,その人がもともと持っている性格や人柄。,,,draft
+st-sense-eoryeopda-01-en,sense-eoryeopda-01,en,difficult; hard,"To require considerable effort, skill, or thought to do or understand.",,,draft
+st-sense-eoryeopda-01-zh,sense-eoryeopda-01,zh,难；困难,做某事或理解某事需要较多的努力、能力或思考。,,,draft
+st-sense-eoryeopda-01-ja,sense-eoryeopda-01,ja,難しい；困難だ,何かをしたり理解したりするのに、多くの努力や能力、考える力を必要とする。,,,draft
+st-sense-joahada-01-en,sense-joahada-01,en,like; be fond of,"To have a positive feeling toward or be fond of a thing, place, food, music, or similar object of preference.",,,draft
+st-sense-joahada-01-zh,sense-joahada-01,zh,喜欢；喜爱,对某种事物、地点、食物、音乐等有好感或喜爱之情。,,,draft
+st-sense-joahada-01-ja,sense-joahada-01,ja,好きだ；好む,物・場所・食べ物・音楽などに好感を持ち、好む。,,,draft
+st-sense-joahada-02-en,sense-joahada-02,en,enjoy; like doing,To enjoy doing a particular activity and willingly do it.,,,draft
+st-sense-joahada-02-zh,sense-joahada-02,zh,喜欢做；爱好,喜欢从事某种活动，并乐于去做。,,,draft
+st-sense-joahada-02-ja,sense-joahada-02,ja,～するのが好きだ；好む,ある活動をすることを好み、楽しんで行う。,,,draft
+st-sense-joahada-03-en,sense-joahada-03,en,like; have feelings for,"To feel affection, fondness, or special interest toward a person; whether the feeling is romantic depends on context.",,,draft
+st-sense-joahada-03-zh,sense-joahada-03,zh,喜欢；对……有好感,对某个人抱有好感、亲近感或喜欢的感情；是否带有恋爱意味取决于语境。,,,draft
+st-sense-joahada-03-ja,sense-joahada-03,ja,好きだ；好意を持つ,ある人に親しみや好意を感じる。恋愛感情を含むかどうかは文脈による。,,,draft

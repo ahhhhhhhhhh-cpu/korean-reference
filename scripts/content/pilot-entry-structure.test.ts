@@ -62,4 +62,21 @@ describe("Pilot entry structure (Phase 7C-4B-1R-A2)", () => {
     expect(counts.verb).toBe(14);
     expect(counts.adjective).toBe(8);
   });
+
+  it("has complete pronunciation and etymology coverage (Phase 7C-4B-1R-B)", () => {
+    expect(entries.rows.every((row) => row.pronunciation_hangul?.trim())).toBe(true);
+    expect(entries.rows.every((row) => row.etymology_type?.trim())).toBe(true);
+
+    const etymology = entries.rows.reduce<Record<string, number>>((acc, row) => {
+      const type = row.etymology_type ?? "";
+      acc[type] = (acc[type] ?? 0) + 1;
+      return acc;
+    }, {});
+
+    expect(etymology.native).toBe(24);
+    expect(etymology.sino_korean).toBe(7);
+    expect(etymology.hybrid).toBe(1);
+    expect(etymology.loanword ?? 0).toBe(0);
+    expect(etymology.unknown ?? 0).toBe(0);
+  });
 });
