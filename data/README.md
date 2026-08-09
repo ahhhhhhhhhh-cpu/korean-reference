@@ -156,13 +156,28 @@ The live importer exists but is **Dev-only** and **draft-only** in this phase.
 
 **Supported target (allowlist):** only **korean-reference-dev** — project ref `rwtkaplfvbvlibipnjin`. Any other Supabase project (including random third-party refs) is rejected even when `--project-ref`, `DATABASE_URL`, and `NEXT_PUBLIC_SUPABASE_URL` all agree. **Production import is hard-blocked and unsupported.**
 
-Requirements:
+#### Read-only database preflight (recommended first)
+
+Use `--preflight-only` to connect to Dev and run **SELECT-only** conflict checks with **no transaction and no writes**. Recommended after seed cleanup and before every first live import into a cleaned Dev environment.
+
+```bash
+npm run content:import -- \
+  --dir data/pilot/entry \
+  --preflight-only \
+  --confirm-dev \
+  --project-ref rwtkaplfvbvlibipnjin
+```
+
+Requirements for any database connection (`--preflight-only` or `--execute`):
 
 - `DATABASE_URL` — direct Postgres or Supabase pooler connection string (env or `.env.local`); remote Supabase requires SSL (direct `db.<ref>.supabase.co` or `*.pooler.supabase.com`)
-- `--execute` — explicit opt-in to writes
 - `--confirm-dev` — confirm Dev-only intent
 - `--project-ref rwtkaplfvbvlibipnjin` — must match the project ref derived from `DATABASE_URL`
 - Optional consistency check: `NEXT_PUBLIC_SUPABASE_URL` must match the same ref when set
+
+Exactly one DB mode is required: `--preflight-only` (read-only) **or** `--execute` (transactional writes). Combining both flags is rejected.
+
+#### Live draft import (writes)
 
 ```bash
 npm run content:import -- \

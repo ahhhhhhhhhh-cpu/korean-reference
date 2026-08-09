@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Dev-only live draft import CLI (direct PostgreSQL).
- * Requires explicit --execute, --confirm-dev, --project-ref, and DATABASE_URL.
+ * Requires explicit --preflight-only or --execute, --confirm-dev, --project-ref, and DATABASE_URL.
  */
 import {
   parseLiveImportArgs,
@@ -13,6 +13,7 @@ import { loadImportEnvironment } from "./import-env";
 import {
   executeLivePilotImport,
   formatLiveImportResult,
+  runPreflightOnlyImport,
 } from "./import-live";
 import { validateProjectRefTarget } from "./import-project-ref";
 import {
@@ -30,23 +31,18 @@ async function main(): Promise<void> {
   const cli = parseLiveImportArgs(process.argv);
   const env = loadImportEnvironment();
 
-  if (!cli.execute) {
-    console.error(
-      "Live import requires --execute. No database connection was attempted.",
-    );
-    printLiveImportUsage();
-    process.exit(1);
-  }
-
   const guard = validateLiveImportGuards(cli, env);
   if (!guard.ok) {
     console.error(guard.reason);
+    if (!cli.preflightOnly && !cli.execute) {
+      printLiveImportUsage();
+    }
     process.exit(1);
   }
 
   const projectCheck = validateProjectRefTarget({
     databaseUrl: env.databaseUrl!,
-    expectedProjectRef: cli.projectRef!,
+    expectedProjectRef: guard.options.projectRef!,
     supabaseUrl: env.supabaseUrl,
   });
   if (!projectCheck.ok) {
@@ -77,6 +73,13 @@ async function main(): Promise<void> {
   const db = createPgPool({ connectionString: env.databaseUrl!, connect: true });
 
   try {
+    if (guard.mode === "preflight") {
+      const result = await runPreflightOnlyImport(db, pkg, guard.options.projectRef!);
+      console.log(result.report);
+      if (!result.ok) process.exit(1);
+      return;
+    }
+
     const result = await executeLivePilotImport(db, pkg);
     console.log(formatLiveImportResult(result));
     if (!result.preflight.ok || !result.summary) {

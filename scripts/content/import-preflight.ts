@@ -1,4 +1,4 @@
-import { SAFE_IMPORT_STATUSES } from "./import-config";
+import { PILOT_EXPECTED_COUNTS, SAFE_IMPORT_STATUSES } from "./import-config";
 import type { CsvRow } from "./csv-parse";
 import type { ContentPackage } from "./import-package";
 import { getPackageRows } from "./import-package";
@@ -395,6 +395,66 @@ export function summarizePreflightSnapshot(input: PreflightInput): PreflightSnap
     pilotSlugOverlaps,
     pilotImportKeyMatches,
   };
+}
+
+export function countConflictsByKind(conflicts: PreflightConflict[]): {
+  seedSlug: number;
+  unsafeStatus: number;
+  naturalKey: number;
+  total: number;
+} {
+  let seedSlug = 0;
+  let unsafeStatus = 0;
+  let naturalKey = 0;
+  for (const c of conflicts) {
+    if (c.kind === "seed_slug_collision") seedSlug++;
+    else if (c.kind === "import_key_unsafe_status") unsafeStatus++;
+    else if (c.kind === "natural_key_collision") naturalKey++;
+  }
+  return { seedSlug, unsafeStatus, naturalKey, total: conflicts.length };
+}
+
+export function formatPreflightOnlyReport(
+  projectRef: string,
+  snapshot: PreflightSnapshot,
+  conflicts: PreflightConflict[],
+): string {
+  const summary = countConflictsByKind(conflicts);
+  const lines = [
+    "--- Dev database preflight (read-only) ---",
+    `Target project ref: ${projectRef}`,
+    "",
+    "Incoming Pilot counts:",
+    `  entries: ${PILOT_EXPECTED_COUNTS.entries}`,
+    `  senses: ${PILOT_EXPECTED_COUNTS.senses}`,
+    `  sense_translations: ${PILOT_EXPECTED_COUNTS.sense_translations}`,
+    `  entry_aliases: ${PILOT_EXPECTED_COUNTS.entry_aliases}`,
+    `  examples: ${PILOT_EXPECTED_COUNTS.examples}`,
+    `  example_translations: ${PILOT_EXPECTED_COUNTS.example_translations}`,
+    `  entry_examples: ${PILOT_EXPECTED_COUNTS.entry_examples}`,
+    "",
+    "Database state:",
+    `  existing entries: ${snapshot.entryCount}`,
+    `  existing senses: ${snapshot.senseCount}`,
+    `  existing examples: ${snapshot.exampleCount}`,
+    "",
+    "Conflict summary:",
+    `  seed slug conflicts: ${summary.seedSlug}`,
+    `  keyed unsafe-status conflicts: ${summary.unsafeStatus}`,
+    `  natural-key conflicts: ${summary.naturalKey}`,
+    `  total blocking conflicts: ${summary.total}`,
+  ];
+
+  if (conflicts.length === 0) {
+    lines.push("", "PREFLIGHT PASSED", "Blocking conflicts: 0", "Database writes: NONE");
+  } else {
+    lines.push("", `PREFLIGHT BLOCKED (${conflicts.length} conflict(s))`);
+    for (const c of conflicts) {
+      lines.push(`  ${c.kind}: ${c.message}`);
+    }
+  }
+
+  return lines.join("\n");
 }
 
 export function formatPreflightReport(

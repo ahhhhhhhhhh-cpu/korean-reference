@@ -4,6 +4,7 @@ import path from "node:path";
 
 import {
   parseLiveImportArgs,
+  resolveDbConnectionMode,
   validateLiveImportGuards,
 } from "./import-args";
 import { createMockDbClient, createPgPool } from "./import-db";
@@ -14,7 +15,7 @@ import {
   PILOT_EXPECTED_COUNTS,
 } from "./import-config";
 import { loadImportEnvironment } from "./import-env";
-import { executeLivePilotImport } from "./import-live";
+import { executeLivePilotImport, PREFLIGHT_READONLY_SQL, runPreflightOnlyImport } from "./import-live";
 import {
   assertDraftOnlyPackage,
   loadPilotWritePackage,
@@ -23,6 +24,7 @@ import {
 import {
   buildPreflightInputFromRows,
   detectPreflightConflicts,
+  formatPreflightOnlyReport,
   TransactionSafetyError,
 } from "./import-preflight";
 import {
@@ -55,7 +57,7 @@ function emptyPreflightHandler(sql: string) {
 }
 
 describe("live import guards", () => {
-  it("rejects live execution without --execute", () => {
+  it("rejects database access without --preflight-only or --execute", () => {
     const options = parseLiveImportArgs([
       "node",
       "import-live-cli.ts",
@@ -65,12 +67,13 @@ describe("live import guards", () => {
       "--project-ref",
       DEV_REF,
     ]);
+    expect(resolveDbConnectionMode(options)).toBeNull();
     const result = validateLiveImportGuards(options, {
       databaseUrl: `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`,
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.reason).toContain("--execute");
+      expect(result.reason).toMatch(/preflight-only|execute/i);
     }
   });
 
@@ -719,8 +722,217 @@ describe("live import transaction behavior (mock db)", () => {
   });
 });
 
+describe("preflight-only mode", () => {
+  const devDatabaseUrl = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
+
+  it("accepts --preflight-only for allowed Dev target", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { databaseUrl: devDatabaseUrl });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.mode).toBe("preflight");
+  });
+
+  it("requires --confirm-dev for preflight-only", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { databaseUrl: devDatabaseUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-dev");
+  });
+
+  it("requires --project-ref for preflight-only", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--confirm-dev",
+    ]);
+    const result = validateLiveImportGuards(options, { databaseUrl: devDatabaseUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--project-ref");
+  });
+
+  it("requires DATABASE_URL for preflight-only", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validateLiveImportGuards(options, {});
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("DATABASE_URL");
+  });
+
+  it("rejects random third project for preflight-only", () => {
+    const databaseUrl = `postgresql://postgres.${THIRD_REF}@db.${THIRD_REF}.supabase.co:5432/postgres`;
+    const result = validateProjectRefTarget({
+      databaseUrl,
+      expectedProjectRef: THIRD_REF,
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects Production for preflight-only", () => {
+    const databaseUrl = `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`;
+    const result = validateProjectRefTarget({
+      databaseUrl,
+      expectedProjectRef: PROD_REF,
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects --preflight-only combined with --execute", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--execute",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { databaseUrl: devDatabaseUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toContain("Cannot combine");
+    }
+  });
+
+  it("runs database preflight without transaction or writer", async () => {
+    let beginCount = 0;
+    let insertSeen = false;
+
+    const db = createMockDbClient({
+      onBegin: () => {
+        beginCount++;
+      },
+      query: async (sql) => {
+        if (/^\s*INSERT/i.test(sql.trim())) insertSeen = true;
+        const empty = emptyPreflightHandler(sql);
+        if (empty) return empty;
+        return { rows: [], rowCount: 0 };
+      },
+    });
+
+    const pkg = loadPilotWritePackage("data/pilot/entry");
+    const result = await runPreflightOnlyImport(db, pkg, DEV_REF);
+
+    expect(result.ok).toBe(true);
+    expect(beginCount).toBe(0);
+    expect(insertSeen).toBe(false);
+    expect(result.report).toContain("PREFLIGHT PASSED");
+    expect(result.report).toContain("Database writes: NONE");
+    expect(result.report).toContain(DEV_REF);
+  });
+
+  it("fails preflight-only on conflicts without transaction", async () => {
+    let beginCount = 0;
+
+    const db = createMockDbClient({
+      onBegin: () => {
+        beginCount++;
+      },
+      query: async (sql) => {
+        if (sql.includes("FROM public.entries")) {
+          return {
+            rows: [
+              { id: "1", import_key: null, slug: "hakgyo", status: "draft" },
+            ],
+            rowCount: 1,
+          };
+        }
+        const empty = emptyPreflightHandler(sql);
+        if (empty) return empty;
+        return { rows: [], rowCount: 0 };
+      },
+    });
+
+    const pkg = loadPilotWritePackage("data/pilot/entry");
+    const result = await runPreflightOnlyImport(db, pkg, DEV_REF);
+
+    expect(result.ok).toBe(false);
+    expect(beginCount).toBe(0);
+    expect(result.report).toContain("PREFLIGHT BLOCKED");
+    expect(result.report).toContain("seed slug conflicts: 1");
+  });
+
+  it("preflight-only report includes incoming Pilot counts", () => {
+    const report = formatPreflightOnlyReport(
+      DEV_REF,
+      {
+        entryCount: 0,
+        senseCount: 0,
+        exampleCount: 0,
+        pilotSlugOverlaps: 0,
+        pilotImportKeyMatches: 0,
+      },
+      [],
+    );
+    expect(report).toContain("entries: 32");
+    expect(report).toContain("entry_examples: 61");
+    expect(report).toContain("PREFLIGHT PASSED");
+  });
+
+  it("preflight SQL path is SELECT-only", () => {
+    for (const sql of PREFLIGHT_READONLY_SQL) {
+      expect(sql.trim().toUpperCase()).toMatch(/^SELECT/);
+      expect(sql.toUpperCase()).not.toMatch(/\b(INSERT|UPDATE|DELETE|BEGIN|COMMIT|ROLLBACK)\b/);
+    }
+  });
+
+  it("execute path still reaches transaction after successful preflight", async () => {
+    let beginCount = 0;
+
+    const db = createMockDbClient({
+      onBegin: () => {
+        beginCount++;
+      },
+      query: async (sql) => {
+        const empty = emptyPreflightHandler(sql);
+        if (empty) return empty;
+        if (sql.includes("WHERE import_key")) return { rows: [], rowCount: 0 };
+        if (sql.startsWith("INSERT INTO public.")) {
+          return { rows: [{ id: "new-id" }], rowCount: 1 };
+        }
+        return { rows: [], rowCount: 0 };
+      },
+    });
+
+    const pkg = {
+      dir: "mock",
+      files: new Map([
+        ["entries.csv", { rows: [{ import_key: "entry-hakgyo", slug: "hakgyo", headword: "학교", headword_normalized: "학교", part_of_speech: "noun", status: "draft" }] }],
+        ["senses.csv", { rows: [] }],
+        ["sense_translations.csv", { rows: [] }],
+        ["entry_aliases.csv", { rows: [] }],
+        ["examples.csv", { rows: [] }],
+        ["example_translations.csv", { rows: [] }],
+        ["entry_examples.csv", { rows: [] }],
+      ]),
+    };
+
+    await executeLivePilotImport(db, pkg);
+    expect(beginCount).toBe(1);
+  });
+});
+
 describe("import-live-cli safety (no credentials)", () => {
-  it("fails before DB when run without execute flag", () => {
+  it("fails before DB when run without a DB mode flag", () => {
     const result = spawnSync(
       process.execPath,
       [
@@ -730,9 +942,113 @@ describe("import-live-cli safety (no credentials)", () => {
       { cwd: process.cwd(), encoding: "utf8" },
     );
     expect(result.status).not.toBe(0);
-    expect(`${result.stderr}${result.stdout}`).toContain("--execute");
+    expect(`${result.stderr}${result.stdout}`).toMatch(/preflight-only|execute/i);
   });
 
+  it("preflight-only without DATABASE_URL fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join("node_modules", "tsx", "dist", "cli.mjs"),
+        "scripts/content/import-live-cli.ts",
+        "--preflight-only",
+        "--confirm-dev",
+        "--project-ref",
+        DEV_REF,
+        "--dir",
+        "data/pilot/entry",
+      ],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: { ...process.env, DATABASE_URL: "" },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toContain("DATABASE_URL");
+  });
+
+  it("rejects preflight-only combined with execute before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join("node_modules", "tsx", "dist", "cli.mjs"),
+        "scripts/content/import-live-cli.ts",
+        "--preflight-only",
+        "--execute",
+        "--confirm-dev",
+        "--project-ref",
+        DEV_REF,
+        "--dir",
+        "data/pilot/entry",
+      ],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          DATABASE_URL: `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toContain("Cannot combine");
+  });
+
+  it("rejects production ref for preflight-only before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join("node_modules", "tsx", "dist", "cli.mjs"),
+        "scripts/content/import-live-cli.ts",
+        "--preflight-only",
+        "--confirm-dev",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        "data/pilot/entry",
+      ],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toMatch(/Production|blocked/i);
+  });
+
+  it("rejects random third project ref for preflight-only before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      [
+        path.join("node_modules", "tsx", "dist", "cli.mjs"),
+        "scripts/content/import-live-cli.ts",
+        "--preflight-only",
+        "--confirm-dev",
+        "--project-ref",
+        THIRD_REF,
+        "--dir",
+        "data/pilot/entry",
+      ],
+      {
+        cwd: process.cwd(),
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          DATABASE_URL: `postgresql://postgres.${THIRD_REF}@db.${THIRD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toContain("allowlist");
+  });
+});
+
+describe("import-live-cli execute safety (no credentials)", () => {
   it("rejects production ref before DB initialization", () => {
     const result = spawnSync(
       process.execPath,
