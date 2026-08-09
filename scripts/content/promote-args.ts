@@ -12,6 +12,7 @@ import {
 
 export type PromoteCliOptions = LiveImportCliOptions & {
   targetStatus: PromoteTargetStatus;
+  confirmPublish: boolean;
 };
 
 export type PromoteGuardResult =
@@ -21,12 +22,15 @@ export type PromoteGuardResult =
 export function parsePromoteArgs(argv: string[]): PromoteCliOptions {
   const base = parseLiveImportArgs(argv);
   let targetStatus: PromoteTargetStatus | undefined;
+  let confirmPublish = false;
 
   for (let i = 2; i < argv.length; i++) {
     const arg = argv[i]!;
     if (arg === "--target-status" && argv[i + 1]) {
       const parsed = parsePromoteTargetStatus(argv[++i]!);
       if (parsed) targetStatus = parsed;
+    } else if (arg === "--confirm-publish") {
+      confirmPublish = true;
     }
   }
 
@@ -36,7 +40,7 @@ export function parsePromoteArgs(argv: string[]): PromoteCliOptions {
     );
   }
 
-  return { ...base, targetStatus };
+  return { ...base, targetStatus, confirmPublish };
 }
 
 export function printPromoteUsage(): void {
@@ -48,6 +52,9 @@ export function printPromoteUsage(): void {
   Dev Formal Pilot status transition:
     content:promote --dir <path> --target-status in_review|published \\
       --execute --confirm-dev --project-ref <DEV_REF>
+
+  Published execute additionally requires:
+    --confirm-publish   Explicit operator confirmation for publication writes
 
 Dev-only (direct PostgreSQL via DATABASE_URL).
 
@@ -74,6 +81,19 @@ export function validatePromoteGuards(
 ): PromoteGuardResult {
   const base = validateLiveImportGuards(options, env);
   if (!base.ok) return base;
+
+  if (
+    base.mode === "execute" &&
+    options.targetStatus === "published" &&
+    !options.confirmPublish
+  ) {
+    return {
+      ok: false,
+      reason:
+        "Published promotion requires --confirm-publish with --execute. No database connection was attempted.",
+    };
+  }
+
   return { ok: true, options, mode: base.mode };
 }
 

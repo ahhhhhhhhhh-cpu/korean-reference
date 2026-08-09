@@ -20,6 +20,7 @@ import { validateProjectRefTarget } from "./import-project-ref";
 import {
   executePromotePilot,
   formatPromoteExecuteResult,
+  formatWriteConfirmation,
 } from "./promote-execute";
 import { runPromotePreflight } from "./promote-preflight";
 import {
@@ -85,6 +86,14 @@ async function main(): Promise<void> {
       if (!result.ok) process.exit(1);
       return;
     }
+
+    console.log(
+      formatWriteConfirmation({
+        projectRef: guard.options.projectRef!,
+        targetStatus: guard.options.targetStatus,
+        confirmPublish: guard.options.confirmPublish,
+      }),
+    );
 
     const result = await executePromotePilot(
       db,

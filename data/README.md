@@ -167,7 +167,21 @@ npm run content:promote -- \
   --project-ref rwtkaplfvbvlibipnjin
 ```
 
-Execution repeats critical checks inside one PostgreSQL transaction, updates rows in deterministic order, asserts affected-row counts, and rolls back on any failure. For `published`, updates run bottom-up (`sense_translations` → `senses` → `entries` → `example_translations` → `examples` → `entry_aliases`) so DB publication guards remain active.
+For **`--target-status published --execute`**, an additional explicit operator-safety flag is required:
+
+```bash
+npm run content:promote -- \
+  --dir data/pilot/entry \
+  --target-status published \
+  --execute \
+  --confirm-dev \
+  --confirm-publish \
+  --project-ref rwtkaplfvbvlibipnjin
+```
+
+`--confirm-publish` is intentional: it makes accidental publication materially harder. It is **not** required for `--preflight-only` or for `--target-status in_review --execute`.
+
+Execution repeats critical checks inside one PostgreSQL transaction, updates rows in deterministic order, asserts affected-row counts, and rolls back on any failure. For `published`, updates run bottom-up (`sense_translations` → `senses` → `entries` → `example_translations` → `examples` → `entry_aliases`) so DB publication guards remain active. Before writes, execute prints a non-secret audit summary; after commit, it prints `PROMOTION COMMITTED` with the transition label.
 
 ---
 

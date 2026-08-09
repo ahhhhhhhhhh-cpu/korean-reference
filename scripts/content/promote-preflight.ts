@@ -10,12 +10,22 @@ import {
   resolvePromoteTransition,
   type PromoteTargetStatus,
 } from "./promote-config";
+import {
+  checkEnglishDefinitionsForSenses,
+  checkEntryHeadwordFields,
+  checkExampleProvenancePublishable,
+  checkExampleTranslationPublishContent,
+  checkPrimarySenseDbState,
+  checkSenseTranslationPublishContent,
+} from "./promote-publish-checks";
 
 const REQUIRED_LOCALES = ["en", "ja", "zh"] as const;
 
 export type PromoteDbEntryRow = {
   id: string;
   import_key: string;
+  headword: string;
+  headword_normalized: string;
   status: string;
 };
 
@@ -48,6 +58,8 @@ export type PromoteDbExampleRow = {
   import_key: string;
   korean_text: string;
   provenance_type: string;
+  source_note: string | null;
+  license_note: string | null;
   status: string;
 };
 
@@ -56,6 +68,7 @@ export type PromoteDbExampleTranslationRow = {
   import_key: string;
   example_id: string;
   locale: string;
+  translation: string;
   status: string;
 };
 
@@ -97,12 +110,12 @@ export type PromotePreflightInput = {
 };
 
 export const PROMOTE_READONLY_SQL = {
-  entries: `SELECT id::text, import_key, status FROM public.entries WHERE import_key = ANY($1::text[])`,
+  entries: `SELECT id::text, import_key, headword, headword_normalized, status FROM public.entries WHERE import_key = ANY($1::text[])`,
   senses: `SELECT id::text, import_key, entry_id::text, is_primary, status FROM public.senses WHERE import_key = ANY($1::text[])`,
   senseTranslations: `SELECT id::text, import_key, sense_id::text, locale, short_definition, definition, status FROM public.sense_translations WHERE import_key = ANY($1::text[])`,
   entryAliases: `SELECT id::text, import_key, status FROM public.entry_aliases WHERE import_key = ANY($1::text[])`,
-  examples: `SELECT id::text, import_key, korean_text, provenance_type, status FROM public.examples WHERE import_key = ANY($1::text[])`,
-  exampleTranslations: `SELECT id::text, import_key, example_id::text, locale, status FROM public.example_translations WHERE import_key = ANY($1::text[])`,
+  examples: `SELECT id::text, import_key, korean_text, provenance_type, source_note, license_note, status FROM public.examples WHERE import_key = ANY($1::text[])`,
+  exampleTranslations: `SELECT id::text, import_key, example_id::text, locale, translation, status FROM public.example_translations WHERE import_key = ANY($1::text[])`,
   entryExamples: `
     SELECT e.import_key AS entry_import_key,
            ex.import_key AS example_import_key,
@@ -361,65 +374,34 @@ function checkSenseEntryResolution(input: PromotePreflightInput, issues: Promote
 function checkPublishReadiness(input: PromotePreflightInput, issues: PromoteIssue[]): void {
   if (input.targetStatus !== "published") return;
 
-  const primarySenseByEntry = new Map<string, string>();
+  const { sourceStatus } = input.transition;
+  const expectedPrimaryByEntry = new Map<string, { entryImportKey: string; senseImportKey: string }>();
+
   for (const row of getPackageRows(input.pkg, "senses.csv")) {
     if (row.is_primary?.trim().toLowerCase() === "true") {
       const entryKey = row.entry_import_key?.trim();
       const senseKey = row.import_key?.trim();
-      if (entryKey && senseKey) primarySenseByEntry.set(entryKey, senseKey);
+      if (entryKey && senseKey) {
+        expectedPrimaryByEntry.set(entryKey, {
+          entryImportKey: entryKey,
+          senseImportKey: senseKey,
+        });
+      }
     }
   }
 
-  for (const entryKey of input.pilotImportKeys.entries) {
-    if (!primarySenseByEntry.has(entryKey)) {
-      issues.push({
-        kind: "publish_not_ready",
-        entity: "entries",
-        message: `Entry "${entryKey}" has no primary sense declared in Pilot CSV.`,
-      });
-    }
-  }
-
-  const senseIdByKey = new Map(input.db.senses.map((row) => [row.import_key, row.id]));
-  const translationsBySenseId = new Map<string, PromoteDbSenseTranslationRow[]>();
-  for (const row of input.db.sense_translations) {
-    const bucket = translationsBySenseId.get(row.sense_id) ?? [];
-    bucket.push(row);
-    translationsBySenseId.set(row.sense_id, bucket);
-  }
-
-  for (const senseKey of input.pilotImportKeys.senses) {
-    const senseId = senseIdByKey.get(senseKey);
-    if (!senseId) continue;
-
-    const translations = translationsBySenseId.get(senseId) ?? [];
-    const en = translations.find((t) => t.locale === "en");
-    const enContent = en?.short_definition?.trim() || en?.definition?.trim() || "";
-    if (!enContent) {
-      issues.push({
-        kind: "publish_not_ready",
-        entity: "sense_translations",
-        message: `Sense "${senseKey}" lacks non-empty English definition required for publication.`,
-      });
-    }
-  }
-
-  for (const example of input.db.examples) {
-    if (!example.korean_text?.trim()) {
-      issues.push({
-        kind: "publish_not_ready",
-        entity: "examples",
-        message: `Example "${example.import_key}" has empty korean_text.`,
-      });
-    }
-    if (example.provenance_type === "unknown") {
-      issues.push({
-        kind: "publish_not_ready",
-        entity: "examples",
-        message: `Example "${example.import_key}" has provenance_type "unknown" and cannot be published.`,
-      });
-    }
-  }
+  checkEntryHeadwordFields(input.db.entries, issues);
+  checkPrimarySenseDbState(
+    input.db.entries,
+    input.db.senses,
+    expectedPrimaryByEntry,
+    sourceStatus,
+    issues,
+  );
+  checkSenseTranslationPublishContent(input.db.sense_translations, issues);
+  checkEnglishDefinitionsForSenses(input.db.senses, input.db.sense_translations, issues);
+  checkExampleTranslationPublishContent(input.db.example_translations, issues);
+  checkExampleProvenancePublishable(input.db.examples, issues);
 }
 
 export function buildPromotePreflightInput(

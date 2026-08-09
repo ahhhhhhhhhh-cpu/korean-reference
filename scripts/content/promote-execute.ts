@@ -3,9 +3,11 @@ import type { ContentPackage } from "./import-package";
 import {
   PROMOTE_TABLE_BY_ENTITY,
   PROMOTE_UPDATE_ORDER,
+  resolvePromoteTransition,
   type PromoteEntity,
   type PromoteTargetStatus,
 } from "./promote-config";
+import { PILOT_EXPECTED_COUNTS } from "./import-config";
 import {
   detectPromoteIssues,
   loadPromoteDbState,
@@ -19,6 +21,27 @@ export type PromoteExecuteSummary = {
   targetStatus: PromoteTargetStatus;
   updated: Record<PromoteEntity, number>;
 };
+
+export function formatWriteConfirmation(options: {
+  projectRef: string;
+  targetStatus: PromoteTargetStatus;
+  confirmPublish: boolean;
+}): string {
+  const transition = resolvePromoteTransition(options.targetStatus);
+  const publishLine =
+    options.targetStatus === "published"
+      ? "Explicit publish confirmation: YES"
+      : "Explicit publish confirmation: not required";
+
+  return [
+    "--- WRITE CONFIRMATION ---",
+    `Target project ref: ${options.projectRef}`,
+    `Transition: ${transition.label}`,
+    `Pilot entries: ${PILOT_EXPECTED_COUNTS.entries}`,
+    `Pilot examples: ${PILOT_EXPECTED_COUNTS.examples}`,
+    publishLine,
+  ].join("\n");
+}
 
 function keysForEntity(
   entity: PromoteEntity,
@@ -166,6 +189,7 @@ export async function executePromotePilot(
 export function formatPromoteExecuteResult(result: PromoteExecuteResult): string {
   const parts = [result.preflight.report];
   if (result.summary) {
+    const transition = resolvePromoteTransition(result.summary.targetStatus);
     parts.push(
       "",
       "--- Formal Pilot promotion executed ---",
@@ -177,6 +201,7 @@ export function formatPromoteExecuteResult(result: PromoteExecuteResult): string
       "entry_examples: 0 (no status column — unchanged)",
       "",
       "PROMOTION COMMITTED",
+      `Transition: ${transition.label}`,
     );
   }
   return parts.join("\n");

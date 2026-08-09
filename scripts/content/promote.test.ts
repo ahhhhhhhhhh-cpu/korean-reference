@@ -26,6 +26,7 @@ import {
 import {
   executePromotePilot,
   formatPromoteExecuteResult,
+  formatWriteConfirmation,
 } from "./promote-execute";
 import {
   buildPromotePreflightInput,
@@ -37,6 +38,7 @@ import {
   type PromoteDbState,
 } from "./promote-preflight";
 import { collectPilotImportKeys } from "./import-preflight";
+import { getPackageRows } from "./import-package";
 import type { ContentPackage } from "./import-package";
 
 const DEV_REF = DOCUMENTED_DEV_PROJECT_REF;
@@ -182,7 +184,15 @@ function minimalPilotPackage(): ContentPackage {
 
 function buildMockDbState(status: string): PromoteDbState {
   return {
-    entries: [{ id: "e1", import_key: "entry-hakgyo", status }],
+    entries: [
+      {
+        id: "e1",
+        import_key: "entry-hakgyo",
+        headword: "학교",
+        headword_normalized: "학교",
+        status,
+      },
+    ],
     senses: [
       {
         id: "s1",
@@ -228,6 +238,8 @@ function buildMockDbState(status: string): PromoteDbState {
         import_key: "v2-ex-001",
         korean_text: "그 학생은 학교에서 한국어를 배워요.",
         provenance_type: "original",
+        source_note: null,
+        license_note: null,
         status,
       },
     ],
@@ -237,6 +249,7 @@ function buildMockDbState(status: string): PromoteDbState {
         import_key: "et-v2-ex-001-en",
         example_id: "x1",
         locale: "en",
+        translation: "That student is learning Korean at school.",
         status,
       },
       {
@@ -244,6 +257,7 @@ function buildMockDbState(status: string): PromoteDbState {
         import_key: "et-v2-ex-001-zh",
         example_id: "x1",
         locale: "zh",
+        translation: "那个学生在学校学韩语。",
         status,
       },
       {
@@ -251,6 +265,7 @@ function buildMockDbState(status: string): PromoteDbState {
         import_key: "et-v2-ex-001-ja",
         example_id: "x1",
         locale: "ja",
+        translation: "その学生は学校で韓国語を学んでいます。",
         status,
       },
     ],
@@ -950,5 +965,346 @@ describe("promote transition labels", () => {
 
   it("resolvePromoteTransition returns expected source for published target", () => {
     expect(resolvePromoteTransition("published").sourceStatus).toBe("in_review");
+  });
+});
+
+function buildPilotMockDbStateFromPackage(
+  pkg: ContentPackage,
+  status: string,
+): PromoteDbState {
+  const entryIdByKey = new Map<string, string>();
+  const senseIdByKey = new Map<string, string>();
+  const exampleIdByKey = new Map<string, string>();
+
+  const entries = getPackageRows(pkg, "entries.csv").map((row, index) => {
+    const importKey = row.import_key!.trim();
+    const id = `entry-id-${index}`;
+    entryIdByKey.set(importKey, id);
+    return {
+      id,
+      import_key: importKey,
+      headword: row.headword?.trim() || "placeholder",
+      headword_normalized: row.headword_normalized?.trim() || row.headword?.trim() || "placeholder",
+      status,
+    };
+  });
+
+  const senses = getPackageRows(pkg, "senses.csv").map((row, index) => {
+    const importKey = row.import_key!.trim();
+    const entryKey = row.entry_import_key!.trim();
+    const id = `sense-id-${index}`;
+    senseIdByKey.set(importKey, id);
+    return {
+      id,
+      import_key: importKey,
+      entry_id: entryIdByKey.get(entryKey)!,
+      is_primary: row.is_primary?.trim().toLowerCase() === "true",
+      status,
+    };
+  });
+
+  const sense_translations = getPackageRows(pkg, "sense_translations.csv").map((row, index) => {
+    const senseKey = row.sense_import_key!.trim();
+    return {
+      id: `st-id-${index}`,
+      import_key: row.import_key!.trim(),
+      sense_id: senseIdByKey.get(senseKey)!,
+      locale: row.locale!.trim(),
+      short_definition: row.short_definition?.trim() || null,
+      definition: row.definition?.trim() || null,
+      status,
+    };
+  });
+
+  const entry_aliases = getPackageRows(pkg, "entry_aliases.csv").map((row, index) => ({
+    id: `alias-id-${index}`,
+    import_key: row.import_key!.trim(),
+    status,
+  }));
+
+  const examples = getPackageRows(pkg, "examples.csv").map((row, index) => {
+    const importKey = row.import_key!.trim();
+    const id = `example-id-${index}`;
+    exampleIdByKey.set(importKey, id);
+    return {
+      id,
+      import_key: importKey,
+      korean_text: row.korean_text?.trim() || "example",
+      provenance_type: row.provenance_type?.trim() || "original",
+      source_note: row.source_note?.trim() || null,
+      license_note: row.license_note?.trim() || null,
+      status,
+    };
+  });
+
+  const example_translations = getPackageRows(pkg, "example_translations.csv").map(
+    (row, index) => {
+      const exampleKey = row.example_import_key!.trim();
+      return {
+        id: `et-id-${index}`,
+        import_key: row.import_key!.trim(),
+        example_id: exampleIdByKey.get(exampleKey)!,
+        locale: row.locale!.trim(),
+        translation: row.translation?.trim() || "translation",
+        status,
+      };
+    },
+  );
+
+  const entry_examples = getPackageRows(pkg, "entry_examples.csv").map((row) => ({
+    entry_import_key: row.entry_import_key!.trim(),
+    example_import_key: row.example_import_key!.trim(),
+    sense_import_key: row.sense_import_key?.trim() || null,
+  }));
+
+  return {
+    entries,
+    senses,
+    sense_translations,
+    entry_aliases,
+    examples,
+    example_translations,
+    entry_examples,
+  };
+}
+
+describe("promote publish confirmation", () => {
+  const devUrl = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
+
+  it("published + --execute requires --confirm-publish", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--dir",
+      "data/pilot/entry",
+      "--target-status",
+      "published",
+      "--execute",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validatePromoteGuards(options, { databaseUrl: devUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-publish");
+  });
+
+  it("missing --confirm-publish fails before createPgPool (spawn)", () => {
+    const databaseUrl = devUrl;
+    const result = spawnSync(
+      process.execPath,
+      promoteScriptArgs([
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+        "--target-status",
+        "published",
+        "--execute",
+        "--confirm-dev",
+        "--project-ref",
+        DEV_REF,
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        env: { ...envWithoutDatabaseCredentials(), DATABASE_URL: databaseUrl },
+        encoding: "utf8",
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("--confirm-publish");
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("published + --preflight-only does NOT require --confirm-publish", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--dir",
+      "data/pilot/entry",
+      "--target-status",
+      "published",
+      "--preflight-only",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validatePromoteGuards(options, { databaseUrl: devUrl });
+    expect(result.ok).toBe(true);
+  });
+
+  it("in_review + --execute does NOT require --confirm-publish", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--dir",
+      "data/pilot/entry",
+      "--target-status",
+      "in_review",
+      "--execute",
+      "--confirm-dev",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validatePromoteGuards(options, { databaseUrl: devUrl });
+    expect(result.ok).toBe(true);
+  });
+
+  it("--confirm-publish alone does not bypass other guards", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--dir",
+      "data/pilot/entry",
+      "--target-status",
+      "published",
+      "--execute",
+      "--confirm-publish",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const result = validatePromoteGuards(options, { databaseUrl: devUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-dev");
+  });
+
+  it("formatWriteConfirmation shows explicit publish confirmation for published", () => {
+    const output = formatWriteConfirmation({
+      projectRef: DEV_REF,
+      targetStatus: "published",
+      confirmPublish: true,
+    });
+    expect(output).toContain("--- WRITE CONFIRMATION ---");
+    expect(output).toContain(`Target project ref: ${DEV_REF}`);
+    expect(output).toContain("Transition: in_review -> published");
+    expect(output).toContain(`Pilot entries: ${PILOT_EXPECTED_COUNTS.entries}`);
+    expect(output).toContain(`Pilot examples: ${PILOT_EXPECTED_COUNTS.examples}`);
+    expect(output).toContain("Explicit publish confirmation: YES");
+    expect(output).not.toMatch(/DATABASE_URL|password|postgresql/i);
+  });
+});
+
+describe("promote publish preflight checks", () => {
+  it("entry empty headword blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.entries[0]!.headword = "   ";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(issues.some((i) => i.kind === "publish_not_ready" && i.message.includes("headword"))).toBe(
+      true,
+    );
+  });
+
+  it("empty headword_normalized blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.entries[0]!.headword_normalized = "";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some((i) => i.kind === "publish_not_ready" && i.message.includes("headword_normalized")),
+    ).toBe(true);
+  });
+
+  it("missing DB is_primary blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.senses[0]!.is_primary = false;
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some((i) => i.kind === "publish_not_ready" && i.message.includes("no primary sense")),
+    ).toBe(true);
+  });
+
+  it("incorrect DB is_primary vs CSV blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.senses[0]!.import_key = "sense-other";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some((i) => i.kind === "publish_not_ready" && i.message.includes("primary sense mismatch")),
+    ).toBe(true);
+  });
+
+  it("missing primary sense in CSV blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    pkg.files.get("senses.csv")!.rows[0]!.is_primary = "false";
+    const db = buildMockDbState("in_review");
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some(
+        (i) =>
+          i.kind === "publish_not_ready" &&
+          i.message.includes("no primary sense declared in Pilot CSV"),
+      ),
+    ).toBe(true);
+  });
+
+  it("empty sense translation content blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.sense_translations[0]!.short_definition = "  ";
+    db.sense_translations[0]!.definition = null;
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some(
+        (i) => i.kind === "publish_not_ready" && i.entity === "sense_translations",
+      ),
+    ).toBe(true);
+  });
+
+  it("missing EN definition blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.sense_translations[0]!.short_definition = "";
+    db.sense_translations[0]!.definition = "";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some(
+        (i) =>
+          i.kind === "publish_not_ready" &&
+          i.message.includes("English definition required for publication"),
+      ),
+    ).toBe(true);
+  });
+
+  it("empty example translation blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.example_translations[0]!.translation = "   ";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some(
+        (i) => i.kind === "publish_not_ready" && i.entity === "example_translations",
+      ),
+    ).toBe(true);
+  });
+
+  it("invalid example provenance blocks publish preflight", () => {
+    const pkg = minimalPilotPackage();
+    const db = buildMockDbState("in_review");
+    db.examples[0]!.provenance_type = "unknown";
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(
+      issues.some(
+        (i) => i.kind === "publish_not_ready" && i.message.includes("provenance_type \"unknown\""),
+      ),
+    ).toBe(true);
+  });
+
+  it("valid current Formal Pilot fixture passes publish preflight", () => {
+    const pkg = loadPilotWritePackage("data/pilot/entry");
+    const db = buildPilotMockDbStateFromPackage(pkg, "in_review");
+    const issues = detectPromoteIssues(buildPromotePreflightInput(pkg, "published", db));
+    expect(issues).toEqual([]);
+  });
+});
+
+describe("promote execute audit output", () => {
+  it("successful commit includes transition label", async () => {
+    const state = buildMockDbState("draft");
+    const db = createMockDbClient({ query: mockPromoteQueryHandler(state) });
+    const pkg = minimalPilotPackage();
+    const result = await executePromotePilot(db, pkg, "in_review", DEV_REF);
+    expect(formatPromoteExecuteResult(result)).toContain("PROMOTION COMMITTED");
+    expect(formatPromoteExecuteResult(result)).toContain("Transition: draft -> in_review");
   });
 });
