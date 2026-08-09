@@ -1,0 +1,145 @@
+import_key,example_import_key,locale,translation,status
+et-v2-ex-001-en,v2-ex-001,en,That student is learning Korean at school.,draft
+et-v2-ex-001-zh,v2-ex-001,zh,那个学生在学校学韩语。,draft
+et-v2-ex-001-ja,v2-ex-001,ja,その学生は学校で韓国語を学んでいます。,draft
+et-v2-ex-002-en,v2-ex-002,en,This robot talks and moves like a person.,draft
+et-v2-ex-002-zh,v2-ex-002,zh,这个机器人会像人一样说话和行动。,draft
+et-v2-ex-002-ja,v2-ex-002,ja,このロボットは人間のように話したり動いたりします。,draft
+et-v2-ex-003-en,v2-ex-003,en,That person is from Busan.,draft
+et-v2-ex-003-zh,v2-ex-003,zh,那位是釜山人。,draft
+et-v2-ex-003-ja,v2-ex-003,ja,その方は釜山出身です。,draft
+et-v2-ex-004-en,v2-ex-004,en,"Minsu is capable, and he also has a really good character.",draft
+et-v2-ex-004-zh,v2-ex-004,zh,敏洙能力很强，人品也很好。,draft
+et-v2-ex-004-ja,v2-ex-004,ja,ミンスさんは能力もありますが、人柄もとてもいいです。,draft
+et-v2-ex-005-en,v2-ex-005,en,There are three people in the classroom.,draft
+et-v2-ex-005-zh,v2-ex-005,zh,教室里有三个人。,draft
+et-v2-ex-005-ja,v2-ex-005,ja,教室に三人います。,draft
+et-v2-ex-006-en,v2-ex-006,en,Minji is an old friend of mine.,draft
+et-v2-ex-006-zh,v2-ex-006,zh,敏智是我的老朋友。,draft
+et-v2-ex-006-ja,v2-ex-006,ja,ミンジは私の昔からの友達です。,draft
+et-v2-ex-007-en,v2-ex-007,en,That new person is a year younger than me.,draft
+et-v2-ex-007-zh,v2-ex-007,zh,新来的那个人比我小一岁。,draft
+et-v2-ex-007-ja,v2-ex-007,ja,新しく来たその人は、私より一歳年下です。,draft
+et-v2-ex-008-en,v2-ex-008,en,I don't have much time to rest today.,draft
+et-v2-ex-008-zh,v2-ex-008,zh,我今天没什么时间休息。,draft
+et-v2-ex-008-ja,v2-ex-008,ja,今日は休む時間があまりありません。,draft
+et-v2-ex-009-en,v2-ex-009,en,The meeting lasted for three hours.,draft
+et-v2-ex-009-zh,v2-ex-009,zh,会议持续了三个小时。,draft
+et-v2-ex-009-ja,v2-ex-009,ja,会議は3時間続きました。,draft
+et-v2-ex-010-en,v2-ex-010,en,I drank a glass of water after exercising.,draft
+et-v2-ex-010-zh,v2-ex-010,zh,运动后我喝了一杯水。,draft
+et-v2-ex-010-ja,v2-ex-010,ja,運動した後、水を一杯飲みました。,draft
+et-v2-ex-011-en,v2-ex-011,en,The water in the lake is very clear.,draft
+et-v2-ex-011-zh,v2-ex-011,zh,湖里的水很清澈。,draft
+et-v2-ex-011-ja,v2-ex-011,ja,湖の水はとても澄んでいます。,draft
+et-v2-ex-012-en,v2-ex-012,en,I'm going to the library tomorrow.,draft
+et-v2-ex-012-zh,v2-ex-012,zh,我明天去图书馆。,draft
+et-v2-ex-012-ja,v2-ex-012,ja,明日は図書館に行きます。,draft
+et-v2-ex-013-en,v2-ex-013,en,I listen to the radio every morning.,draft
+et-v2-ex-013-zh,v2-ex-013,zh,我每天早上都听广播。,draft
+et-v2-ex-013-ja,v2-ex-013,ja,私は毎朝ラジオを聞きます。,draft
+et-v2-ex-014-en,v2-ex-014,en,I had gimbap for lunch.,draft
+et-v2-ex-014-zh,v2-ex-014,zh,我午饭吃了紫菜包饭。,draft
+et-v2-ex-014-ja,v2-ex-014,ja,昼ご飯にキンパを食べました。,draft
+et-v2-ex-015-en,v2-ex-015,en,I take cold medicine three times a day.,draft
+et-v2-ex-015-zh,v2-ex-015,zh,我一天吃三次感冒药。,draft
+et-v2-ex-015-ja,v2-ex-015,ja,風邪薬を一日に3回飲みます。,draft
+et-v2-ex-016-en,v2-ex-016,en,I looked outside and saw that it was raining.,draft
+et-v2-ex-016-zh,v2-ex-016,zh,我往窗外一看，发现正在下雨。,draft
+et-v2-ex-016-ja,v2-ex-016,ja,窓の外を見ると、雨が降っていました。,draft
+et-v2-ex-017-en,v2-ex-017,en,I watched a movie at the theater yesterday.,draft
+et-v2-ex-017-zh,v2-ex-017,zh,我昨天在电影院看了电影。,draft
+et-v2-ex-017-ja,v2-ex-017,ja,昨日、映画館で映画を見ました。,draft
+et-v2-ex-018-en,v2-ex-018,en,I looked at the map and found the way to my destination.,draft
+et-v2-ex-018-zh,v2-ex-018,zh,我看着地图找到了去目的地的路。,draft
+et-v2-ex-018-ja,v2-ex-018,ja,地図を見て、目的地までの道を見つけました。,draft
+et-v2-ex-019-en,v2-ex-019,en,I checked the reservation details again.,draft
+et-v2-ex-019-zh,v2-ex-019,zh,我又查看了一遍预约内容。,draft
+et-v2-ex-019-ja,v2-ex-019,ja,予約内容をもう一度確認しました。,draft
+et-v2-ex-020-en,v2-ex-020,en,I'm taking a Korean exam next week.,draft
+et-v2-ex-020-zh,v2-ex-020,zh,我下周要参加韩语考试。,draft
+et-v2-ex-020-ja,v2-ex-020,ja,来週、韓国語の試験を受けます。,draft
+et-v2-ex-021-en,v2-ex-021,en,I learned a lot from this experience.,draft
+et-v2-ex-021-zh,v2-ex-021,zh,我从这次经历中学到了很多。,draft
+et-v2-ex-021-ja,v2-ex-021,ja,今回の経験から本当に多くのことを学びました。,draft
+et-v2-ex-022-en,v2-ex-022,en,"These days, I study Korean every evening.",draft
+et-v2-ex-022-zh,v2-ex-022,zh,我最近每天晚上都学韩语。,draft
+et-v2-ex-022-ja,v2-ex-022,ja,最近、毎晩韓国語を勉強しています。,draft
+et-v2-ex-023-en,v2-ex-023,en,I walk in the park for about thirty minutes every evening.,draft
+et-v2-ex-023-zh,v2-ex-023,zh,我每天晚上都在公园里走大约三十分钟。,draft
+et-v2-ex-023-ja,v2-ex-023,ja,毎晩、公園で30分くらい歩きます。,draft
+et-v2-ex-024-en,v2-ex-024,en,Try writing the new word in your notebook.,draft
+et-v2-ex-024-zh,v2-ex-024,zh,试着把新单词写在笔记本上。,draft
+et-v2-ex-024-ja,v2-ex-024,ja,ノートに新しい単語を書いてみてください。,draft
+et-v2-ex-025-en,v2-ex-025,en,That friend is kind-hearted and always helps other people.,draft
+et-v2-ex-025-zh,v2-ex-025,zh,那个朋友心地很善良，总是帮助别人。,draft
+et-v2-ex-025-ja,v2-ex-025,ja,その友達は心が温かく、いつも人を助けています。,draft
+et-v2-ex-026-en,v2-ex-026,en,I don't know the answer to that question.,draft
+et-v2-ex-026-zh,v2-ex-026,zh,我不知道那个问题的答案。,draft
+et-v2-ex-026-ja,v2-ex-026,ja,私はその質問の答えを知りません。,draft
+et-v2-ex-027-en,v2-ex-027,en,I'm not sure if it'll rain tomorrow.,draft
+et-v2-ex-027-zh,v2-ex-027,zh,不知道明天会不会下雨。,draft
+et-v2-ex-027-ja,v2-ex-027,ja,明日雨が降るかどうか分かりません。,draft
+et-v2-ex-028-en,v2-ex-028,en,My father built a small house for our family.,draft
+et-v2-ex-028-zh,v2-ex-028,zh,爸爸为我们家盖了一座小房子。,draft
+et-v2-ex-028-ja,v2-ex-028,ja,父が私たち家族のために小さな家を建ててくれました。,draft
+et-v2-ex-029-en,v2-ex-029,en,I use this app every day.,draft
+et-v2-ex-029-zh,v2-ex-029,zh,我每天都用这个应用。,draft
+et-v2-ex-029-ja,v2-ex-029,ja,私はこのアプリを毎日使います。,draft
+et-v2-ex-030-en,v2-ex-030,en,My friend lives in Seoul now.,draft
+et-v2-ex-030-zh,v2-ex-030,zh,我的朋友现在住在首尔。,draft
+et-v2-ex-030-ja,v2-ex-030,ja,私の友達は今ソウルに住んでいます。,draft
+et-v2-ex-031-en,v2-ex-031,en,The explanations in this book are very good.,draft
+et-v2-ex-031-zh,v2-ex-031,zh,这本书的讲解很好。,draft
+et-v2-ex-031-ja,v2-ex-031,ja,この本の説明はとても良いです。,draft
+et-v2-ex-032-en,v2-ex-032,en,This room is much bigger than I expected.,draft
+et-v2-ex-032-zh,v2-ex-032,zh,这个房间比我想象的大得多。,draft
+et-v2-ex-032-ja,v2-ex-032,ja,この部屋は思ったよりずっと大きいです。,draft
+et-v2-ex-033-en,v2-ex-033,en,This bag is a little too small for my laptop.,draft
+et-v2-ex-033-zh,v2-ex-033,zh,这个包装我的笔记本电脑有点小。,draft
+et-v2-ex-033-ja,v2-ex-033,ja,このかばんは私のノートパソコンを入れるには少し小さいです。,draft
+et-v2-ex-034-en,v2-ex-034,en,The room is so cold that it's hard to study.,draft
+et-v2-ex-034-zh,v2-ex-034,zh,房间太冷了，学习起来很困难。,draft
+et-v2-ex-034-ja,v2-ex-034,ja,部屋がとても寒くて、勉強するのが大変です。,draft
+et-v2-ex-035-en,v2-ex-035,en,This train is much faster than the bus.,draft
+et-v2-ex-035-zh,v2-ex-035,zh,这列火车比公交车快得多。,draft
+et-v2-ex-035-ja,v2-ex-035,ja,この列車はバスよりずっと速いです。,draft
+et-v2-ex-036-en,v2-ex-036,en,This problem is harder than I expected.,draft
+et-v2-ex-036-zh,v2-ex-036,zh,这个问题比我想象的难。,draft
+et-v2-ex-036-ja,v2-ex-036,ja,この問題は思ったより難しいです。,draft
+et-v2-ex-037-en,v2-ex-037,en,"If that's really the case, I think we'll have to change the plan.",draft
+et-v2-ex-037-zh,v2-ex-037,zh,如果情况真是那样，恐怕得改变计划了。,draft
+et-v2-ex-037-ja,v2-ex-037,ja,本当にそういう状況なら、計画を変えたほうがよさそうです。,draft
+et-v2-ex-038-en,v2-ex-038,en,"When winter comes, the mountain turns white with snow.",draft
+et-v2-ex-038-zh,v2-ex-038,zh,冬天一到，山就被雪染白了。,draft
+et-v2-ex-038-ja,v2-ex-038,ja,冬になると、山が雪で真っ白になります。,draft
+et-v2-ex-039-en,v2-ex-039,en,This restaurant is famous for its Korean food.,draft
+et-v2-ex-039-zh,v2-ex-039,zh,这家餐厅以韩餐出名。,draft
+et-v2-ex-039-ja,v2-ex-039,ja,この店は韓国料理で有名です。,draft
+et-v2-ex-040-en,v2-ex-040,en,It's better not to eat food that has been left in the refrigerator for too long.,draft
+et-v2-ex-040-zh,v2-ex-040,zh,冰箱里放太久的食物最好不要吃。,draft
+et-v2-ex-040-ja,v2-ex-040,ja,冷蔵庫に長く置いておいた食べ物は、食べないほうがいいです。,draft
+et-v2-ex-041-en,v2-ex-041,en,Dining culture is a little different in every country.,draft
+et-v2-ex-041-zh,v2-ex-041,zh,每个国家的饮食文化都有些不同。,draft
+et-v2-ex-041-ja,v2-ex-041,ja,国によって食文化は少しずつ違います。,draft
+et-v2-ex-042-en,v2-ex-042,en,You can't know everything in a person's heart just from appearances.,draft
+et-v2-ex-042-zh,v2-ex-042,zh,只看外表，无法完全了解一个人的内心。,draft
+et-v2-ex-042-ja,v2-ex-042,ja,外から見ただけでは、人の心をすべて知ることはできません。,draft
+et-v2-ex-043-en,v2-ex-043,en,I felt much more at ease once the exam was over.,draft
+et-v2-ex-043-zh,v2-ex-043,zh,考试结束后，我一下子轻松了许多。,draft
+et-v2-ex-043-ja,v2-ex-043,ja,試験が終わって、気持ちがずいぶん楽になりました。,draft
+et-v2-ex-044-en,v2-ex-044,en,"This time, I'm determined to see it through to the end.",draft
+et-v2-ex-044-zh,v2-ex-044,zh,这次我打算坚持做到最后。,draft
+et-v2-ex-044-ja,v2-ex-044,ja,今回は最後までやり抜くつもりです。,draft
+et-v2-ex-045-en,v2-ex-045,en,I like spicy food.,draft
+et-v2-ex-045-zh,v2-ex-045,zh,我喜欢吃辣的食物。,draft
+et-v2-ex-045-ja,v2-ex-045,ja,私は辛い食べ物が好きです。,draft
+et-v2-ex-046-en,v2-ex-046,en,I like taking photos on weekends.,draft
+et-v2-ex-046-zh,v2-ex-046,zh,我喜欢周末拍照。,draft
+et-v2-ex-046-ja,v2-ex-046,ja,私は週末に写真を撮るのが好きです。,draft
+et-v2-ex-047-en,v2-ex-047,en,The students in our class really like their homeroom teacher.,draft
+et-v2-ex-047-zh,v2-ex-047,zh,我们班的学生都很喜欢班主任。,draft
+et-v2-ex-047-ja,v2-ex-047,ja,私たちのクラスの生徒たちは、担任の先生のことがとても好きです。,draft
+et-v2-ex-048-en,v2-ex-048,en,That person turned pale after hearing the frightening news.,draft
+et-v2-ex-048-zh,v2-ex-048,zh,那个人听到可怕的消息后，脸色变得苍白。,draft
+et-v2-ex-048-ja,v2-ex-048,ja,その人は恐ろしい知らせを聞いて、顔が青ざめました。,draft
