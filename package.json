@@ -10,7 +10,8 @@
     "test": "vitest run",
     "content:validate": "tsx scripts/content/validate-content-cli.ts",
     "content:dry-run": "tsx scripts/content/import-content.ts --dry-run",
-    "content:import": "tsx scripts/content/import-live-cli.ts"
+    "content:import": "tsx scripts/content/import-live-cli.ts",
+    "content:promote": "tsx scripts/content/promote-cli.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

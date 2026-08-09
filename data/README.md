@@ -115,10 +115,59 @@ import as draft          (Dev-only live import via direct PostgreSQL)
         ↓
 content review
     ↓
-in_review
+in_review               (Dev-only: npm run content:promote -- --target-status in_review …)
     ↓
-publish
+published               (Dev-only: npm run content:promote -- --target-status published …)
 ```
+
+After promotion, **do not re-run the draft importer** on the same Pilot rows — the importer only updates existing rows that are still `draft`.
+
+---
+
+## Dev-only Formal Pilot status promotion
+
+The promotion CLI transitions **only** the exact Formal Pilot `import_key` set from `data/pilot/entry/` — never broad `WHERE status = 'draft'` updates.
+
+**Supported target (allowlist):** only **korean-reference-dev** — project ref `rwtkaplfvbvlibipnjin`. Production is hard-blocked.
+
+### Supported transitions
+
+| `--target-status` | Required current DB status | Result |
+|-------------------|--------------------------|--------|
+| `in_review` | `draft` | All six keyed Pilot entity groups → `in_review` |
+| `published` | `in_review` | All six keyed Pilot entity groups → `published` (bottom-up order) |
+
+`entry_examples` (61 junction rows) has **no status column** and is never updated — public visibility follows parent entry/example/sense publication state.
+
+Direct `draft → published` is **not** supported. Use the two-step review path above.
+
+#### Read-only promotion preflight (recommended first)
+
+```bash
+npm run content:promote -- \
+  --dir data/pilot/entry \
+  --target-status in_review \
+  --preflight-only \
+  --confirm-dev \
+  --project-ref rwtkaplfvbvlibipnjin
+```
+
+Requirements match the live importer: `DATABASE_URL`, `--confirm-dev`, `--project-ref`, and exactly one of `--preflight-only` or `--execute`.
+
+Preflight verifies exact Pilot counts, source statuses, translation completeness (en/zh/ja), link integrity, and (for `published`) publish-readiness — **SELECT only, no writes**.
+
+#### Execute promotion (single transaction)
+
+```bash
+npm run content:promote -- \
+  --dir data/pilot/entry \
+  --target-status in_review \
+  --execute \
+  --confirm-dev \
+  --project-ref rwtkaplfvbvlibipnjin
+```
+
+Execution repeats critical checks inside one PostgreSQL transaction, updates rows in deterministic order, asserts affected-row counts, and rolls back on any failure. For `published`, updates run bottom-up (`sense_translations` → `senses` → `entries` → `example_translations` → `examples` → `entry_aliases`) so DB publication guards remain active.
 
 ---
 

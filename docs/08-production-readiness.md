@@ -169,14 +169,15 @@ import as draft          (Dev-only: npm run content:import -- --execute …)
         ↓
 content review
         ↓
-in_review
+in_review                 (Dev-only: npm run content:promote -- --target-status in_review …)
         ↓
-publish                 (DB workflow / editorial tools)
+published                 (Dev-only: npm run content:promote -- --target-status published …)
 ```
 
 - Importer default status: **`draft`**
 - Direct `published` import requires future explicit flag: `--allow-publish`
 - Live DB import uses **direct PostgreSQL** (`DATABASE_URL`), Dev-only allowlist (korean-reference-dev only), SSL for Supabase hosts, read-only `--preflight-only` mode, and one transactional Pilot write via `--execute`; Production is hard-blocked in this phase
+- Status promotion uses **`npm run content:promote`** with the same Dev-only guards, exact Pilot `import_key` scoping, read-only `--preflight-only`, and single-transaction `--execute`; `entry_examples` is never updated (no status column); importer must not be rerun after promotion because it only accepts existing `draft` rows
 
 See [`data/README.md`](../data/README.md) for CSV contract, `import_key` strategy, and encoding rules.
 
