@@ -5,14 +5,9 @@ import {
   detectPreflightConflicts,
   formatPreflightOnlyReport,
   formatPreflightReport,
+  loadPreflightDbRows,
   PREFLIGHT_SQL,
   summarizePreflightSnapshot,
-  type DbEntryRow,
-  type DbExampleRow,
-  type DbExampleTranslationRow,
-  type DbKeyedRow,
-  type DbSenseRow,
-  type DbSenseTranslationRow,
   type PreflightConflict,
   type PreflightSnapshot,
 } from "./import-preflight";
@@ -34,24 +29,8 @@ export async function runDatabasePreflight(
   db: TransactionCapableClient,
   pkg: ContentPackage,
 ): Promise<LivePreflightResult> {
-  const [entriesRes, examplesRes, keyedRes, sensesRes, senseTranslationsRes, exampleTranslationsRes] =
-    await Promise.all([
-      db.query<DbEntryRow>(PREFLIGHT_SQL.entries),
-      db.query<DbExampleRow>(PREFLIGHT_SQL.examples),
-      db.query<DbKeyedRow>(PREFLIGHT_SQL.keyedStatuses),
-      db.query<DbSenseRow>(PREFLIGHT_SQL.senses),
-      db.query<DbSenseTranslationRow>(PREFLIGHT_SQL.senseTranslations),
-      db.query<DbExampleTranslationRow>(PREFLIGHT_SQL.exampleTranslations),
-    ]);
-
-  const input = buildPreflightInput(pkg, {
-    entries: entriesRes.rows,
-    examples: examplesRes.rows,
-    keyed: keyedRes.rows,
-    senses: sensesRes.rows,
-    senseTranslations: senseTranslationsRes.rows,
-    exampleTranslations: exampleTranslationsRes.rows,
-  });
+  const rows = await loadPreflightDbRows(db);
+  const input = buildPreflightInput(pkg, rows);
 
   const conflicts = detectPreflightConflicts(input);
   const snapshot = summarizePreflightSnapshot(input);

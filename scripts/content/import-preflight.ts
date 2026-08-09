@@ -1,5 +1,6 @@
 import { PILOT_EXPECTED_COUNTS, SAFE_IMPORT_STATUSES } from "./import-config";
 import type { CsvRow } from "./csv-parse";
+import type { DbClient } from "./import-db";
 import type { ContentPackage } from "./import-package";
 import { getPackageRows } from "./import-package";
 
@@ -508,6 +509,29 @@ export type PreflightDbRows = {
   senseTranslations: DbSenseTranslationRow[];
   exampleTranslations: DbExampleTranslationRow[];
 };
+
+/** Load preflight snapshot rows sequentially (one pg Client must not query concurrently). */
+export async function loadPreflightDbRows(db: DbClient): Promise<PreflightDbRows> {
+  const entriesRes = await db.query<DbEntryRow>(PREFLIGHT_SQL.entries);
+  const examplesRes = await db.query<DbExampleRow>(PREFLIGHT_SQL.examples);
+  const keyedRes = await db.query<DbKeyedRow>(PREFLIGHT_SQL.keyedStatuses);
+  const sensesRes = await db.query<DbSenseRow>(PREFLIGHT_SQL.senses);
+  const senseTranslationsRes = await db.query<DbSenseTranslationRow>(
+    PREFLIGHT_SQL.senseTranslations,
+  );
+  const exampleTranslationsRes = await db.query<DbExampleTranslationRow>(
+    PREFLIGHT_SQL.exampleTranslations,
+  );
+
+  return {
+    entries: entriesRes.rows,
+    examples: examplesRes.rows,
+    keyed: keyedRes.rows,
+    senses: sensesRes.rows,
+    senseTranslations: senseTranslationsRes.rows,
+    exampleTranslations: exampleTranslationsRes.rows,
+  };
+}
 
 export function buildPreflightInput(
   pkg: ContentPackage,

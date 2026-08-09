@@ -25,6 +25,7 @@ import {
   buildPreflightInputFromRows,
   detectPreflightConflicts,
   formatPreflightOnlyReport,
+  loadPreflightDbRows,
   TransactionSafetyError,
 } from "./import-preflight";
 import {
@@ -45,6 +46,24 @@ import {
 const DEV_REF = DOCUMENTED_DEV_PROJECT_REF;
 const PROD_REF = "rpykfrvcynpwmbkogiou";
 const THIRD_REF = "abcdefghijklmnopqr";
+
+/** Fixture cwd with no .env files — isolates tests from developer .env.local. */
+const ENV_ISOLATED_CWD = path.join(process.cwd(), "data/fixtures/valid/minimal");
+
+function envWithoutDatabaseCredentials(): NodeJS.ProcessEnv {
+  const env = { ...process.env };
+  delete env.DATABASE_URL;
+  delete env.NEXT_PUBLIC_SUPABASE_URL;
+  return env;
+}
+
+function cliScriptArgs(extraArgs: string[]): string[] {
+  return [
+    path.join(process.cwd(), "node_modules", "tsx", "dist", "cli.mjs"),
+    path.join(process.cwd(), "scripts/content/import-live-cli.ts"),
+    ...extraArgs,
+  ];
+}
 
 /** Mock preflight queries return empty unless overridden. */
 function emptyPreflightHandler(sql: string) {
@@ -234,6 +253,17 @@ describe("import environment precedence", () => {
     });
     expect(env.databaseUrl).toBe("postgresql://from-process-env");
     expect(env.supabaseUrl).toBe("https://from-process-env.supabase.co");
+  });
+
+  it("explicit empty DATABASE_URL does not fall back to .env.local", () => {
+    const env = loadImportEnvironment(process.cwd(), { DATABASE_URL: "" });
+    expect(env.databaseUrl).toBeUndefined();
+  });
+
+  it("isolated cwd without env files yields no DATABASE_URL", () => {
+    const env = loadImportEnvironment(ENV_ISOLATED_CWD, {});
+    expect(env.databaseUrl).toBeUndefined();
+    expect(env.supabaseUrl).toBeUndefined();
   });
 });
 
@@ -722,6 +752,49 @@ describe("live import transaction behavior (mock db)", () => {
   });
 });
 
+describe("sequential client query usage", () => {
+  it("loadPreflightDbRows runs queries one at a time on a single client", async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    const client = {
+      query: async (sql: string) => {
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await Promise.resolve();
+        inFlight--;
+        const empty = emptyPreflightHandler(sql);
+        if (empty) return empty;
+        return { rows: [], rowCount: 0 };
+      },
+    };
+
+    await loadPreflightDbRows(client);
+    expect(maxInFlight).toBe(1);
+  });
+
+  it("runCriticalTransactionChecks does not overlap queries on the transaction client", async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    const db = createMockDbClient({
+      query: async (sql) => {
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await Promise.resolve();
+        inFlight--;
+        const empty = emptyPreflightHandler(sql);
+        if (empty) return empty;
+        return { rows: [], rowCount: 0 };
+      },
+    });
+
+    const pkg = loadPilotWritePackage("data/pilot/entry");
+    await db.transaction(async (tx) => runCriticalTransactionChecks(tx, pkg));
+    expect(maxInFlight).toBe(1);
+  });
+});
+
 describe("preflight-only mode", () => {
   const devDatabaseUrl = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
 
@@ -948,20 +1021,18 @@ describe("import-live-cli safety (no credentials)", () => {
   it("preflight-only without DATABASE_URL fails before DB initialization", () => {
     const result = spawnSync(
       process.execPath,
-      [
-        path.join("node_modules", "tsx", "dist", "cli.mjs"),
-        "scripts/content/import-live-cli.ts",
+      cliScriptArgs([
         "--preflight-only",
         "--confirm-dev",
         "--project-ref",
         DEV_REF,
         "--dir",
-        "data/pilot/entry",
-      ],
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
       {
-        cwd: process.cwd(),
+        cwd: ENV_ISOLATED_CWD,
         encoding: "utf8",
-        env: { ...process.env, DATABASE_URL: "" },
+        env: envWithoutDatabaseCredentials(),
       },
     );
     expect(result.status).not.toBe(0);
@@ -1120,7 +1191,7 @@ describe("pilot package counts", () => {
 
 describe("dry-run path remains database-free", () => {
   it("loadImportEnvironment does not require DATABASE_URL for validation-only workflows", () => {
-    const env = loadImportEnvironment(process.cwd(), {});
+    const env = loadImportEnvironment(ENV_ISOLATED_CWD, {});
     expect(env.databaseUrl).toBeUndefined();
   });
 

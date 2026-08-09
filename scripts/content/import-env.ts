@@ -19,6 +19,22 @@ function parseEnvLine(line: string): [string, string] | null {
   return [key, value];
 }
 
+/** Resolve one import env var: explicit process env wins; empty string means unset (no file fallback). */
+function resolveImportEnvVar(
+  env: NodeJS.ProcessEnv,
+  key: string,
+  merged: Record<string, string>,
+): string | undefined {
+  if (Object.prototype.hasOwnProperty.call(env, key)) {
+    const value = env[key];
+    if (value === undefined || value === null) return undefined;
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  const fromFile = merged[key]?.trim();
+  return fromFile || undefined;
+}
+
 /** Load DATABASE_URL and NEXT_PUBLIC_SUPABASE_URL without logging values. */
 export function loadImportEnvironment(
   cwd = process.cwd(),
@@ -37,9 +53,7 @@ export function loadImportEnvironment(
   }
 
   return {
-    databaseUrl: env.DATABASE_URL?.trim() || merged.DATABASE_URL?.trim(),
-    supabaseUrl:
-      env.NEXT_PUBLIC_SUPABASE_URL?.trim() ||
-      merged.NEXT_PUBLIC_SUPABASE_URL?.trim(),
+    databaseUrl: resolveImportEnvVar(env, "DATABASE_URL", merged),
+    supabaseUrl: resolveImportEnvVar(env, "NEXT_PUBLIC_SUPABASE_URL", merged),
   };
 }
