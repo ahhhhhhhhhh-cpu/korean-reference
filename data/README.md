@@ -16,7 +16,8 @@ data/
 ```text
 scripts/content/
   validate-content.ts ← CSV → parse → validate → report (no DB)
-  import-content.ts     ← --dry-run only; live import disabled
+  import-content.ts     ← --dry-run only; no database connection
+  import-live-cli.ts    ← Dev-only live draft import (direct PostgreSQL)
 ```
 
 ## Synthetic vs formal
@@ -109,9 +110,9 @@ CSV authored
 npm run content:validate
     ↓
 npm run content:dry-run
-    ↓
-import as draft          (future: live import)
-    ↓
+        ↓
+import as draft          (Dev-only live import via direct PostgreSQL)
+        ↓
 content review
     ↓
 in_review
@@ -148,6 +149,40 @@ npm run content:validate -- --dir data/fixtures/valid/minimal
 npm run content:validate -- --dir data/templates   # headers only → expect warnings
 npm run content:dry-run -- --dir data/fixtures/valid/minimal
 ```
+
+### Dev-only live draft import (direct PostgreSQL)
+
+The live importer exists but is **Dev-only** and **draft-only** in this phase.
+
+**Supported target (allowlist):** only **korean-reference-dev** — project ref `rwtkaplfvbvlibipnjin`. Any other Supabase project (including random third-party refs) is rejected even when `--project-ref`, `DATABASE_URL`, and `NEXT_PUBLIC_SUPABASE_URL` all agree. **Production import is hard-blocked and unsupported.**
+
+Requirements:
+
+- `DATABASE_URL` — direct Postgres or Supabase pooler connection string (env or `.env.local`); remote Supabase requires SSL (direct `db.<ref>.supabase.co` or `*.pooler.supabase.com`)
+- `--execute` — explicit opt-in to writes
+- `--confirm-dev` — confirm Dev-only intent
+- `--project-ref rwtkaplfvbvlibipnjin` — must match the project ref derived from `DATABASE_URL`
+- Optional consistency check: `NEXT_PUBLIC_SUPABASE_URL` must match the same ref when set
+
+```bash
+npm run content:import -- \
+  --dir data/pilot/entry \
+  --execute \
+  --confirm-dev \
+  --project-ref rwtkaplfvbvlibipnjin
+```
+
+Behavior:
+
+- Validates CSV locally first (no `--allow-publish`; incoming rows must be `draft`)
+- Runs read-only database **preflight** before any write (all keyed entities; unsafe non-draft statuses block)
+- Re-checks critical slug/status conflicts inside the transaction before the first write
+- Blocks seed-style slug collisions (existing slug with `NULL`/different `import_key`); **does not auto-delete synthetic seed conflicts** — operator-reviewed resolution is a separate step
+- Executes the full Pilot package in **one transaction** (rollback on any failure)
+- Upserts keyed entities by `import_key`; preserves UUIDs on safe draft re-import
+- **Production import is not supported** — documented production project refs are hard-blocked
+
+Supabase CLI, Docker, and Vercel are **not** required to run the Node importer against remote Dev when `DATABASE_URL` is available.
 
 Exit codes: `0` = valid, `1` = validation errors.
 

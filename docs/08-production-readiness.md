@@ -165,7 +165,7 @@ npm run content:validate
         ↓
 npm run content:dry-run
         ↓
-import as draft          (future: live import)
+import as draft          (Dev-only: npm run content:import -- --execute …)
         ↓
 content review
         ↓
@@ -176,7 +176,7 @@ publish                 (DB workflow / editorial tools)
 
 - Importer default status: **`draft`**
 - Direct `published` import requires future explicit flag: `--allow-publish`
-- First live DB import is **not enabled** in Phase 7A
+- Live DB import uses **direct PostgreSQL** (`DATABASE_URL`), Dev-only allowlist (korean-reference-dev only), SSL for Supabase hosts, and one transactional Pilot write; Production is hard-blocked in this phase
 
 See [`data/README.md`](../data/README.md) for CSV contract, `import_key` strategy, and encoding rules.
 

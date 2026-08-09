@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "content:validate": "tsx scripts/content/validate-content-cli.ts",
-    "content:dry-run": "tsx scripts/content/import-content.ts --dry-run"
+    "content:dry-run": "tsx scripts/content/import-content.ts --dry-run",
+    "content:import": "tsx scripts/content/import-live-cli.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -20,6 +21,7 @@
     "next": "16.2.12",
     "next-intl": "^4.13.4",
     "next-themes": "^0.4.6",
+    "pg": "^8.23.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "shadcn": "^4.16.1",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.21.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
