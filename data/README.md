@@ -111,24 +111,48 @@ npm run content:validate
     ↓
 npm run content:dry-run
         ↓
-import as draft          (Dev-only live import via direct PostgreSQL)
+import as draft          (explicit Dev or Production target; always start with preflight)
         ↓
-content review
+verify
     ↓
-in_review               (Dev-only: npm run content:promote -- --target-status in_review …)
+in_review               (npm run content:promote -- --target-status in_review …)
     ↓
-published               (Dev-only: npm run content:promote -- --target-status published …)
+verify
+    ↓
+published               (npm run content:promote -- --target-status published …)
+    ↓
+verify
 ```
 
 After promotion, **do not re-run the draft importer** on the same Pilot rows — the importer only updates existing rows that are still `draft`.
 
 ---
 
-## Dev-only Formal Pilot status promotion
+## Release targets (Dev vs Production)
+
+Dev and Production are **separate explicit targets**. Production is never inferred from “not Dev”, and it is never the default.
+
+| Target | Project | Project ref | Confirmation | Connection env |
+|--------|---------|-------------|--------------|----------------|
+| Dev | `korean-reference-dev` | `rwtkaplfvbvlibipnjin` | `--confirm-dev` | `DATABASE_URL` only |
+| Production | `korean-reference-prod` | `rpykfrvcynpwmbkogiou` | `--confirm-production` | `PRODUCTION_DATABASE_URL` only |
+
+Rules:
+
+- `--confirm-dev` **never** authorizes Production.
+- Production mode **never** falls back to `DATABASE_URL`.
+- Dev mode **never** uses `PRODUCTION_DATABASE_URL`.
+- `--project-ref` must match the selected connection URL’s derived project identity.
+- Unknown / third-party refs are rejected.
+- Dev ref is rejected in Production mode; Production ref is rejected in Dev mode.
+- **Never commit secrets** or connection strings. **Never copy Dev environment settings into Production.**
+- Production writes require explicit Production confirmation. Always start with `--preflight-only`, then import → verify → review → verify → publish → verify.
+
+---
+
+## Formal Pilot status promotion
 
 The promotion CLI transitions **only** the exact Formal Pilot `import_key` set from `data/pilot/entry/` — never broad `WHERE status = 'draft'` updates.
-
-**Supported target (allowlist):** only **korean-reference-dev** — project ref `rwtkaplfvbvlibipnjin`. Production is hard-blocked.
 
 ### Supported transitions
 
@@ -152,7 +176,7 @@ npm run content:promote -- \
   --project-ref rwtkaplfvbvlibipnjin
 ```
 
-Requirements match the live importer: `DATABASE_URL`, `--confirm-dev`, `--project-ref`, and exactly one of `--preflight-only` or `--execute`.
+Requirements match the live importer: target confirmation (`--confirm-dev` or `--confirm-production`), matching `--project-ref`, the selected connection URL (`DATABASE_URL` or `PRODUCTION_DATABASE_URL`), and exactly one of `--preflight-only` or `--execute`.
 
 Preflight verifies exact Pilot counts, source statuses, translation completeness (en/zh/ja), link integrity, and (for `published`) publish-readiness — **SELECT only, no writes**.
 
@@ -180,6 +204,31 @@ npm run content:promote -- \
 ```
 
 `--confirm-publish` is intentional: it makes accidental publication materially harder. It is **not** required for `--preflight-only` or for `--target-status in_review --execute`.
+
+Production publish execute requires **all** of: `--confirm-production`, `--project-ref rpykfrvcynpwmbkogiou`, `PRODUCTION_DATABASE_URL` identity match, `--execute`, and `--confirm-publish`.
+
+#### Production promotion (same semantics, separate target)
+
+```bash
+npm run content:promote -- \
+  --dir data/pilot/entry \
+  --target-status in_review \
+  --preflight-only \
+  --confirm-production \
+  --project-ref rpykfrvcynpwmbkogiou
+```
+
+```bash
+npm run content:promote -- \
+  --dir data/pilot/entry \
+  --target-status published \
+  --execute \
+  --confirm-production \
+  --confirm-publish \
+  --project-ref rpykfrvcynpwmbkogiou
+```
+
+Uses `PRODUCTION_DATABASE_URL` only. Do not overwrite Dev `DATABASE_URL` in `.env.local`.
 
 Execution repeats critical checks inside one PostgreSQL transaction, updates rows in deterministic order, asserts affected-row counts, and rolls back on any failure. For `published`, updates run bottom-up (`sense_translations` → `senses` → `entries` → `example_translations` → `examples` → `entry_aliases`) so DB publication guards remain active. Before writes, execute prints a non-secret audit summary; after commit, it prints `PROMOTION COMMITTED` with the transition label.
 
@@ -213,15 +262,17 @@ npm run content:validate -- --dir data/templates   # headers only → expect war
 npm run content:dry-run -- --dir data/fixtures/valid/minimal
 ```
 
-### Dev-only live draft import (direct PostgreSQL)
+### Live draft import (direct PostgreSQL)
 
-The live importer exists but is **Dev-only** and **draft-only** in this phase.
+The live importer is **draft-only**. Direct publish is not supported. Dev and Production are separate explicit targets (see **Release targets** above).
 
-**Supported target (allowlist):** only **korean-reference-dev** — project ref `rwtkaplfvbvlibipnjin`. Any other Supabase project (including random third-party refs) is rejected even when `--project-ref`, `DATABASE_URL`, and `NEXT_PUBLIC_SUPABASE_URL` all agree. **Production import is hard-blocked and unsupported.**
+**Dev allowlist:** only **korean-reference-dev** — `rwtkaplfvbvlibipnjin`.  
+**Production allowlist:** only **korean-reference-prod** — `rpykfrvcynpwmbkogiou`.  
+Unknown refs are rejected even when `--project-ref` and the connection URL agree.
 
-#### Read-only database preflight (recommended first)
+#### Read-only database preflight (required first)
 
-Use `--preflight-only` to connect to Dev and run **SELECT-only** conflict checks with **no transaction and no writes**. Recommended after seed cleanup and before every first live import into a cleaned Dev environment.
+Use `--preflight-only` to run **SELECT-only** conflict checks with **no transaction and no writes**. Recommended before every live import.
 
 ```bash
 npm run content:import -- \
@@ -233,10 +284,11 @@ npm run content:import -- \
 
 Requirements for any database connection (`--preflight-only` or `--execute`):
 
-- `DATABASE_URL` — direct Postgres or Supabase pooler connection string (env or `.env.local`); remote Supabase requires SSL (direct `db.<ref>.supabase.co` or `*.pooler.supabase.com`)
-- `--confirm-dev` — confirm Dev-only intent
-- `--project-ref rwtkaplfvbvlibipnjin` — must match the project ref derived from `DATABASE_URL`
-- Optional consistency check: `NEXT_PUBLIC_SUPABASE_URL` must match the same ref when set
+- Target confirmation: `--confirm-dev` **or** `--confirm-production` (never both; `--confirm-dev` never authorizes Production)
+- `--project-ref` — exact expected ref for that target; must match the selected connection URL
+- Dev: `DATABASE_URL` only (direct Postgres or Supabase pooler; remote Supabase requires SSL)
+- Production: `PRODUCTION_DATABASE_URL` only — **no fallback** to `DATABASE_URL`
+- Optional Dev consistency check: `NEXT_PUBLIC_SUPABASE_URL` must match the Dev ref when set (ignored in Production mode because local app env is Dev)
 
 Exactly one DB mode is required: `--preflight-only` (read-only) **or** `--execute` (transactional writes). Combining both flags is rejected.
 
@@ -250,7 +302,27 @@ npm run content:import -- \
   --project-ref rwtkaplfvbvlibipnjin
 ```
 
-Behavior:
+Production import (same draft-only semantics):
+
+```bash
+npm run content:import -- \
+  --dir data/pilot/entry \
+  --preflight-only \
+  --confirm-production \
+  --project-ref rpykfrvcynpwmbkogiou
+```
+
+```bash
+npm run content:import -- \
+  --dir data/pilot/entry \
+  --execute \
+  --confirm-production \
+  --project-ref rpykfrvcynpwmbkogiou
+```
+
+Before Production `--execute`, the CLI prints a non-secret write confirmation banner (`TARGET: PRODUCTION`, project ref, operation, Pilot scope, confirmation flags). It never prints connection strings, passwords, or API keys.
+
+Behavior (identical for Dev and Production):
 
 - Validates CSV locally first (no `--allow-publish`; incoming rows must be `draft`)
 - Runs read-only database **preflight** before any write (all keyed entities; unsafe non-draft statuses block)
@@ -258,9 +330,9 @@ Behavior:
 - Blocks seed-style slug collisions (existing slug with `NULL`/different `import_key`); **does not auto-delete synthetic seed conflicts** — operator-reviewed resolution is a separate step
 - Executes the full Pilot package in **one transaction** (rollback on any failure)
 - Upserts keyed entities by `import_key`; preserves UUIDs on safe draft re-import
-- **Production import is not supported** — documented production project refs are hard-blocked
+- Import results remain `draft` — no direct publish
 
-Supabase CLI, Docker, and Vercel are **not** required to run the Node importer against remote Dev when `DATABASE_URL` is available.
+Supabase CLI, Docker, and Vercel are **not** required to run the Node importer when the selected connection URL is available.
 
 Exit codes: `0` = valid, `1` = validation errors.
 

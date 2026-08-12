@@ -165,21 +165,30 @@ npm run content:validate
         ↓
 npm run content:dry-run
         ↓
-import as draft          (Dev-only: npm run content:import -- --execute …)
+import as draft          (explicit Dev or Production target; always start with preflight)
         ↓
-content review
+verify
         ↓
-in_review                 (Dev-only: npm run content:promote -- --target-status in_review …)
+in_review                 (npm run content:promote -- --target-status in_review …)
         ↓
-published                 (Dev-only: npm run content:promote -- --target-status published …)
+verify
+        ↓
+published                 (npm run content:promote -- --target-status published …)
+        ↓
+verify
 ```
 
 - Importer default status: **`draft`**
 - Direct `published` import requires future explicit flag: `--allow-publish`
-- Live DB import uses **direct PostgreSQL** (`DATABASE_URL`), Dev-only allowlist (korean-reference-dev only), SSL for Supabase hosts, read-only `--preflight-only` mode, and one transactional Pilot write via `--execute`; Production is hard-blocked in this phase
-- Status promotion uses **`npm run content:promote`** with the same Dev-only guards, exact Pilot `import_key` scoping, read-only `--preflight-only`, and single-transaction `--execute`; **`--target-status published --execute` additionally requires `--confirm-publish`** (operator-safety gate — not required for preflight or `in_review` execute); `entry_examples` is never updated (no status column); importer must not be rerun after promotion because it only accepts existing `draft` rows
+- Live DB import uses **direct PostgreSQL** with **separate Dev and Production targets** (never a generic allow-any-project switch):
+  - Dev: `--confirm-dev`, `--project-ref rwtkaplfvbvlibipnjin`, `DATABASE_URL` only
+  - Production: `--confirm-production`, `--project-ref rpykfrvcynpwmbkogiou`, `PRODUCTION_DATABASE_URL` only (no fallback to `DATABASE_URL`; `--confirm-dev` never authorizes Production)
+  - Unknown refs fail; Dev ref is rejected in Production mode and vice versa
+  - SSL for Supabase hosts; read-only `--preflight-only`; one transactional Pilot write via `--execute`; import remains draft-only
+- Status promotion uses **`npm run content:promote`** with the same target guards, exact Pilot `import_key` scoping, read-only `--preflight-only`, and single-transaction `--execute`; **`--target-status published --execute` additionally requires `--confirm-publish`**; Production publish execute requires Production confirmation + exact Production ref + connection identity match + `--execute` + `--confirm-publish`; `entry_examples` is never updated (no status column); importer must not be rerun after promotion because it only accepts existing `draft` rows
+- **Never commit secrets.** Never copy Dev environment settings into Production. Always preflight before Production writes.
 
-See [`data/README.md`](../data/README.md) for CSV contract, `import_key` strategy, and encoding rules.
+See [`data/README.md`](../data/README.md) for CSV contract, `import_key` strategy, encoding rules, and the Production release gate.
 
 ---
 
@@ -251,5 +260,5 @@ Use before merging preview work to `main` and cutting Production:
 2. ~~Run Production migration runbook (§3)~~ ✅ Phase 7B + 7C-3C + 7C-4B-1R-A4 (13/13)
 3. **Formal Pilot CSV authoring + validation** ← current
 4. Author formal CSV from `data/templates/`
-5. Dry-run import against dev, then Production import (future phase)
+5. Dry-run import, then Dev import/promote with explicit Dev confirmation; Production uses the dedicated Production release gate (`PRODUCTION_DATABASE_URL` + `--confirm-production`) — never copy Dev env into Production
 6. Merge to `main` + configure Vercel Production env

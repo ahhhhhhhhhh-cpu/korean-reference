@@ -1,13 +1,26 @@
+import {
+  resolveReleaseTarget,
+  selectConnectionForTarget,
+  type ReleaseTarget,
+} from "./import-target";
+
 export type LiveImportCliOptions = {
   dir: string;
   execute: boolean;
   preflightOnly: boolean;
   confirmDev: boolean;
+  confirmProduction: boolean;
   projectRef?: string;
 };
 
 export type LiveImportGuardResult =
-  | { ok: true; options: LiveImportCliOptions; mode: DbConnectionMode }
+  | {
+      ok: true;
+      options: LiveImportCliOptions;
+      mode: DbConnectionMode;
+      target: ReleaseTarget;
+      connectionString: string;
+    }
   | { ok: false; reason: string };
 
 export type DbConnectionMode = "preflight" | "execute";
@@ -17,6 +30,7 @@ export function parseLiveImportArgs(argv: string[]): LiveImportCliOptions {
   let execute = false;
   let preflightOnly = false;
   let confirmDev = false;
+  let confirmProduction = false;
   let projectRef: string | undefined;
 
   for (let i = 2; i < argv.length; i++) {
@@ -29,6 +43,8 @@ export function parseLiveImportArgs(argv: string[]): LiveImportCliOptions {
       preflightOnly = true;
     } else if (arg === "--confirm-dev") {
       confirmDev = true;
+    } else if (arg === "--confirm-production") {
+      confirmProduction = true;
     } else if (arg === "--project-ref" && argv[i + 1]) {
       projectRef = argv[++i]!;
     } else if (arg === "--help" || arg === "-h") {
@@ -42,6 +58,7 @@ export function parseLiveImportArgs(argv: string[]): LiveImportCliOptions {
     execute,
     preflightOnly,
     confirmDev,
+    confirmProduction,
     projectRef,
   };
 }
@@ -63,23 +80,33 @@ export function printLiveImportUsage(): void {
   Dev live draft import:
     content:import --dir <path> --execute --confirm-dev --project-ref <DEV_REF>
 
-Dev-only (direct PostgreSQL via DATABASE_URL).
+  Read-only Production preflight:
+    content:import --dir <path> --preflight-only --confirm-production --project-ref <PRODUCTION_REF>
+
+  Production live draft import:
+    content:import --dir <path> --execute --confirm-production --project-ref <PRODUCTION_REF>
+
+Dev and Production are separate explicit targets. Production is never the default.
 
 Required for any database connection:
-  --confirm-dev     Confirm Dev-only intent
-  --project-ref     Expected Supabase project ref (must match DATABASE_URL)
-  DATABASE_URL      Direct Postgres connection string (env or .env.local)
+  --confirm-dev            Confirm Dev intent (Dev only; never authorizes Production)
+  --confirm-production     Confirm Production intent (Production only; never reuse --confirm-dev)
+  --project-ref            Expected Supabase project ref (must match the selected connection URL)
+
+Connection environment (no silent fallback either way):
+  DATABASE_URL               Dev Postgres URL (Dev mode only)
+  PRODUCTION_DATABASE_URL    Production Postgres URL (Production mode only)
 
 Exactly one DB mode is required:
   --preflight-only  Read-only SELECT preflight (no writes)
   --execute         Opt in to transactional database writes
 
-Production import is not supported in this phase.`);
+Import remains draft-only. Direct publish is not supported.`);
 }
 
 export function validateLiveImportGuards(
   options: LiveImportCliOptions,
-  env: { databaseUrl?: string },
+  env: { databaseUrl?: string; productionDatabaseUrl?: string },
 ): LiveImportGuardResult {
   if (options.preflightOnly && options.execute) {
     return {
@@ -97,26 +124,30 @@ export function validateLiveImportGuards(
     };
   }
 
-  if (!options.confirmDev) {
-    return {
-      ok: false,
-      reason: "Dev database access requires --confirm-dev.",
-    };
-  }
+  const targetResult = resolveReleaseTarget({
+    confirmDev: options.confirmDev,
+    confirmProduction: options.confirmProduction,
+  });
+  if (!targetResult.ok) return targetResult;
 
   if (!options.projectRef?.trim()) {
+    const label = targetResult.target === "production" ? "Production" : "Dev";
+    const refHint =
+      targetResult.target === "production" ? "<PRODUCTION_REF>" : "<DEV_REF>";
     return {
       ok: false,
-      reason: "Dev database access requires --project-ref <DEV_REF>.",
+      reason: `${label} database access requires --project-ref ${refHint}.`,
     };
   }
 
-  if (!env.databaseUrl?.trim()) {
-    return {
-      ok: false,
-      reason: "Dev database access requires DATABASE_URL (environment or .env.local).",
-    };
-  }
+  const connection = selectConnectionForTarget(targetResult.target, env);
+  if (!connection.ok) return connection;
 
-  return { ok: true, options, mode };
+  return {
+    ok: true,
+    options,
+    mode,
+    target: targetResult.target,
+    connectionString: connection.connectionString,
+  };
 }

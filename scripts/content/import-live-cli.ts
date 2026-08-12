@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Dev-only live draft import CLI (direct PostgreSQL).
- * Requires explicit --preflight-only or --execute, --confirm-dev, --project-ref, and DATABASE_URL.
+ * Formal Pilot live draft import CLI (direct PostgreSQL).
+ * Dev: --confirm-dev + DATABASE_URL + Dev project ref.
+ * Production: --confirm-production + PRODUCTION_DATABASE_URL + Production project ref.
+ * --confirm-dev never authorizes Production. No silent URL fallback.
  */
 import {
   parseLiveImportArgs,
@@ -16,6 +18,7 @@ import {
   runPreflightOnlyImport,
 } from "./import-live";
 import { validateProjectRefTarget } from "./import-project-ref";
+import { formatExecuteWriteBanner } from "./import-target";
 import {
   assertDraftOnlyPackage,
   loadPilotWritePackage,
@@ -41,9 +44,12 @@ async function main(): Promise<void> {
   }
 
   const projectCheck = validateProjectRefTarget({
-    databaseUrl: env.databaseUrl!,
+    databaseUrl: guard.connectionString,
     expectedProjectRef: guard.options.projectRef!,
-    supabaseUrl: env.supabaseUrl,
+    supabaseUrl: guard.target === "dev" ? env.supabaseUrl : undefined,
+    target: guard.target,
+    connectionLabel:
+      guard.target === "production" ? "PRODUCTION_DATABASE_URL" : "DATABASE_URL",
   });
   if (!projectCheck.ok) {
     console.error(projectCheck.reason);
@@ -70,7 +76,19 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const db = createPgPool({ connectionString: env.databaseUrl!, connect: true });
+  if (guard.mode === "execute") {
+    console.log(
+      formatExecuteWriteBanner({
+        target: guard.target,
+        projectRef: guard.options.projectRef!,
+        operation: "import",
+        confirmProduction: guard.options.confirmProduction,
+        confirmPublish: false,
+      }),
+    );
+  }
+
+  const db = createPgPool({ connectionString: guard.connectionString, connect: true });
 
   try {
     if (guard.mode === "preflight") {

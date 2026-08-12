@@ -9,6 +9,7 @@ import {
   type DbConnectionMode,
   type LiveImportCliOptions,
 } from "./import-args";
+import type { ReleaseTarget } from "./import-target";
 
 export type PromoteCliOptions = LiveImportCliOptions & {
   targetStatus: PromoteTargetStatus;
@@ -16,7 +17,13 @@ export type PromoteCliOptions = LiveImportCliOptions & {
 };
 
 export type PromoteGuardResult =
-  | { ok: true; options: PromoteCliOptions; mode: DbConnectionMode }
+  | {
+      ok: true;
+      options: PromoteCliOptions;
+      mode: DbConnectionMode;
+      target: ReleaseTarget;
+      connectionString: string;
+    }
   | { ok: false; reason: string };
 
 export function parsePromoteArgs(argv: string[]): PromoteCliOptions {
@@ -53,31 +60,42 @@ export function printPromoteUsage(): void {
     content:promote --dir <path> --target-status in_review|published \\
       --execute --confirm-dev --project-ref <DEV_REF>
 
+  Read-only Production promotion preflight:
+    content:promote --dir <path> --target-status in_review|published \\
+      --preflight-only --confirm-production --project-ref <PRODUCTION_REF>
+
+  Production Formal Pilot status transition:
+    content:promote --dir <path> --target-status in_review|published \\
+      --execute --confirm-production --project-ref <PRODUCTION_REF>
+
   Published execute additionally requires:
     --confirm-publish   Explicit operator confirmation for publication writes
 
-Dev-only (direct PostgreSQL via DATABASE_URL).
+Dev and Production are separate explicit targets. Production is never the default.
+--confirm-dev never authorizes Production.
 
 Supported transitions:
   draft -> in_review       (--target-status in_review)
   in_review -> published   (--target-status published)
 
 Required for any database connection:
-  --confirm-dev     Confirm Dev-only intent
-  --project-ref     Expected Supabase project ref (must match DATABASE_URL)
-  --target-status   Promotion target (in_review or published)
-  DATABASE_URL      Direct Postgres connection string (env or .env.local)
+  --confirm-dev            Confirm Dev intent (Dev only)
+  --confirm-production     Confirm Production intent (Production only)
+  --project-ref            Expected Supabase project ref (must match the selected connection URL)
+  --target-status          Promotion target (in_review or published)
+
+Connection environment (no silent fallback either way):
+  DATABASE_URL               Dev Postgres URL (Dev mode only)
+  PRODUCTION_DATABASE_URL    Production Postgres URL (Production mode only)
 
 Exactly one DB mode is required:
   --preflight-only  Read-only SELECT preflight (no writes)
-  --execute         Opt in to transactional status updates
-
-Production promotion is not supported in this phase.`);
+  --execute         Opt in to transactional status updates`);
 }
 
 export function validatePromoteGuards(
   options: PromoteCliOptions,
-  env: { databaseUrl?: string },
+  env: { databaseUrl?: string; productionDatabaseUrl?: string },
 ): PromoteGuardResult {
   const base = validateLiveImportGuards(options, env);
   if (!base.ok) return base;
@@ -94,7 +112,13 @@ export function validatePromoteGuards(
     };
   }
 
-  return { ok: true, options, mode: base.mode };
+  return {
+    ok: true,
+    options,
+    mode: base.mode,
+    target: base.target,
+    connectionString: base.connectionString,
+  };
 }
 
 export { resolveDbConnectionMode };

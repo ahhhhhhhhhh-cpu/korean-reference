@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
- * Dev-only Formal Pilot status-transition CLI (direct PostgreSQL).
- * Requires explicit --preflight-only or --execute, --confirm-dev, --project-ref,
- * --target-status, and DATABASE_URL.
+ * Formal Pilot status-transition CLI (direct PostgreSQL).
+ * Dev: --confirm-dev + DATABASE_URL + Dev project ref.
+ * Production: --confirm-production + PRODUCTION_DATABASE_URL + Production project ref.
+ * Published execute additionally requires --confirm-publish.
+ * --confirm-dev never authorizes Production. No silent URL fallback.
  */
 import {
   parsePromoteArgs,
@@ -50,9 +52,12 @@ async function main(): Promise<void> {
   }
 
   const projectCheck = validateProjectRefTarget({
-    databaseUrl: env.databaseUrl!,
+    databaseUrl: guard.connectionString,
     expectedProjectRef: guard.options.projectRef!,
-    supabaseUrl: env.supabaseUrl,
+    supabaseUrl: guard.target === "dev" ? env.supabaseUrl : undefined,
+    target: guard.target,
+    connectionLabel:
+      guard.target === "production" ? "PRODUCTION_DATABASE_URL" : "DATABASE_URL",
   });
   if (!projectCheck.ok) {
     console.error(projectCheck.reason);
@@ -72,7 +77,19 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const db = createPgPool({ connectionString: env.databaseUrl!, connect: true });
+  if (guard.mode === "execute") {
+    console.log(
+      formatWriteConfirmation({
+        projectRef: guard.options.projectRef!,
+        targetStatus: guard.options.targetStatus,
+        confirmPublish: guard.options.confirmPublish,
+        target: guard.target,
+        confirmProduction: guard.options.confirmProduction,
+      }),
+    );
+  }
+
+  const db = createPgPool({ connectionString: guard.connectionString, connect: true });
 
   try {
     if (guard.mode === "preflight") {
@@ -86,14 +103,6 @@ async function main(): Promise<void> {
       if (!result.ok) process.exit(1);
       return;
     }
-
-    console.log(
-      formatWriteConfirmation({
-        projectRef: guard.options.projectRef!,
-        targetStatus: guard.options.targetStatus,
-        confirmPublish: guard.options.confirmPublish,
-      }),
-    );
 
     const result = await executePromotePilot(
       db,

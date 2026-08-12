@@ -7,7 +7,7 @@ import {
   type PromoteEntity,
   type PromoteTargetStatus,
 } from "./promote-config";
-import { PILOT_EXPECTED_COUNTS } from "./import-config";
+import { formatExecuteWriteBanner, type ReleaseTarget } from "./import-target";
 import {
   detectPromoteIssues,
   loadPromoteDbState,
@@ -26,21 +26,17 @@ export function formatWriteConfirmation(options: {
   projectRef: string;
   targetStatus: PromoteTargetStatus;
   confirmPublish: boolean;
+  target?: ReleaseTarget;
+  confirmProduction?: boolean;
 }): string {
-  const transition = resolvePromoteTransition(options.targetStatus);
-  const publishLine =
-    options.targetStatus === "published"
-      ? "Explicit publish confirmation: YES"
-      : "Explicit publish confirmation: not required";
-
-  return [
-    "--- WRITE CONFIRMATION ---",
-    `Target project ref: ${options.projectRef}`,
-    `Transition: ${transition.label}`,
-    `Pilot entries: ${PILOT_EXPECTED_COUNTS.entries}`,
-    `Pilot examples: ${PILOT_EXPECTED_COUNTS.examples}`,
-    publishLine,
-  ].join("\n");
+  return formatExecuteWriteBanner({
+    target: options.target ?? "dev",
+    projectRef: options.projectRef,
+    operation:
+      options.targetStatus === "published" ? "in_review→published" : "draft→in_review",
+    confirmProduction: options.confirmProduction ?? false,
+    confirmPublish: options.confirmPublish,
+  });
 }
 
 function keysForEntity(

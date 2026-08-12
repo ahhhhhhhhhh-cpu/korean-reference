@@ -35,11 +35,11 @@ function resolveImportEnvVar(
   return fromFile || undefined;
 }
 
-/** Load DATABASE_URL and NEXT_PUBLIC_SUPABASE_URL without logging values. */
+/** Load connection env vars without logging values. Never mix Dev and Production URLs. */
 export function loadImportEnvironment(
   cwd = process.cwd(),
   env: NodeJS.ProcessEnv = process.env,
-): { databaseUrl?: string; supabaseUrl?: string } {
+): { databaseUrl?: string; productionDatabaseUrl?: string; supabaseUrl?: string } {
   const merged: Record<string, string> = {};
 
   for (const file of ENV_FILES) {
@@ -54,6 +54,7 @@ export function loadImportEnvironment(
 
   return {
     databaseUrl: resolveImportEnvVar(env, "DATABASE_URL", merged),
+    productionDatabaseUrl: resolveImportEnvVar(env, "PRODUCTION_DATABASE_URL", merged),
     supabaseUrl: resolveImportEnvVar(env, "NEXT_PUBLIC_SUPABASE_URL", merged),
   };
 }

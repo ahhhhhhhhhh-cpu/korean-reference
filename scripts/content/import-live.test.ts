@@ -12,6 +12,7 @@ import {
   ALLOWED_DEV_PROJECT_REFS,
   BLOCKED_PRODUCTION_PROJECT_REFS,
   DOCUMENTED_DEV_PROJECT_REF,
+  DOCUMENTED_PRODUCTION_PROJECT_REF,
   PILOT_EXPECTED_COUNTS,
 } from "./import-config";
 import { loadImportEnvironment } from "./import-env";
@@ -44,7 +45,7 @@ import {
 } from "./import-writer";
 
 const DEV_REF = DOCUMENTED_DEV_PROJECT_REF;
-const PROD_REF = "rpykfrvcynpwmbkogiou";
+const PROD_REF = DOCUMENTED_PRODUCTION_PROJECT_REF;
 const THIRD_REF = "abcdefghijklmnopqr";
 
 /** Fixture cwd with no .env files — isolates tests from developer .env.local. */
@@ -53,6 +54,7 @@ const ENV_ISOLATED_CWD = path.join(process.cwd(), "data/fixtures/valid/minimal")
 function envWithoutDatabaseCredentials(): NodeJS.ProcessEnv {
   const env = { ...process.env };
   delete env.DATABASE_URL;
+  delete env.PRODUCTION_DATABASE_URL;
   delete env.NEXT_PUBLIC_SUPABASE_URL;
   return env;
 }
@@ -219,6 +221,120 @@ describe("live import guards", () => {
   });
 });
 
+describe("live import Production guards (pre-connection)", () => {
+  const prodUrl = `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`;
+  const devUrl = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
+
+  it("accepts Production preflight with Production confirmation and PRODUCTION_DATABASE_URL", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--confirm-production",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validateLiveImportGuards(options, {
+      databaseUrl: devUrl,
+      productionDatabaseUrl: prodUrl,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.target).toBe("production");
+      expect(result.mode).toBe("preflight");
+      expect(result.connectionString).toBe(prodUrl);
+    }
+  });
+
+  it("Production preflight without Production confirmation is rejected", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-production");
+  });
+
+  it("Production execute without Production confirmation is rejected", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--execute",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-production");
+  });
+
+  it("--confirm-dev does not authorize Production import", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--execute",
+      "--confirm-dev",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const guard = validateLiveImportGuards(options, {
+      databaseUrl: prodUrl,
+      productionDatabaseUrl: prodUrl,
+    });
+    expect(guard.ok).toBe(true);
+    if (!guard.ok) return;
+    expect(guard.target).toBe("dev");
+    const identity = validateProjectRefTarget({
+      databaseUrl: guard.connectionString,
+      expectedProjectRef: PROD_REF,
+      target: guard.target,
+    });
+    expect(identity.ok).toBe(false);
+    if (!identity.ok) expect(identity.reason).toMatch(/Production/);
+  });
+
+  it("missing PRODUCTION_DATABASE_URL is rejected even when DATABASE_URL is set", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--preflight-only",
+      "--confirm-production",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validateLiveImportGuards(options, { databaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toContain("PRODUCTION_DATABASE_URL");
+      expect(result.reason).toContain("not used as a fallback");
+    }
+  });
+
+  it("Production mode + Dev project-ref is rejected before pool", () => {
+    const options = parseLiveImportArgs([
+      "node",
+      "import-live-cli.ts",
+      "--execute",
+      "--confirm-production",
+      "--project-ref",
+      DEV_REF,
+    ]);
+    const guard = validateLiveImportGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(guard.ok).toBe(true);
+    if (!guard.ok) return;
+    const identity = validateProjectRefTarget({
+      databaseUrl: guard.connectionString,
+      expectedProjectRef: DEV_REF,
+      target: guard.target,
+    });
+    expect(identity.ok).toBe(false);
+  });
+});
+
 describe("Supabase URL derivation and SSL", () => {
   it("derives project ref from direct Supabase DATABASE_URL", () => {
     const url = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
@@ -263,7 +379,17 @@ describe("import environment precedence", () => {
   it("isolated cwd without env files yields no DATABASE_URL", () => {
     const env = loadImportEnvironment(ENV_ISOLATED_CWD, {});
     expect(env.databaseUrl).toBeUndefined();
+    expect(env.productionDatabaseUrl).toBeUndefined();
     expect(env.supabaseUrl).toBeUndefined();
+  });
+
+  it("explicit empty PRODUCTION_DATABASE_URL does not fall back to DATABASE_URL", () => {
+    const env = loadImportEnvironment(ENV_ISOLATED_CWD, {
+      DATABASE_URL: `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`,
+      PRODUCTION_DATABASE_URL: "",
+    });
+    expect(env.databaseUrl).toBeDefined();
+    expect(env.productionDatabaseUrl).toBeUndefined();
   });
 });
 
@@ -1117,6 +1243,31 @@ describe("import-live-cli safety (no credentials)", () => {
     expect(result.status).not.toBe(0);
     expect(`${result.stderr}${result.stdout}`).toContain("allowlist");
   });
+
+  it("Production preflight without --confirm-production fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--preflight-only",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("--confirm-production");
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
 });
 
 describe("import-live-cli execute safety (no credentials)", () => {
@@ -1172,6 +1323,132 @@ describe("import-live-cli execute safety (no credentials)", () => {
     expect(result.status).not.toBe(0);
     expect(`${result.stderr}${result.stdout}`).toContain("allowlist");
   });
+
+  it("Production execute without --confirm-production fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--execute",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("--confirm-production");
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("Production import with --confirm-dev only fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--execute",
+        "--confirm-dev",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toMatch(/Production|blocked/i);
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("missing PRODUCTION_DATABASE_URL fails before DB even if DATABASE_URL is set", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--preflight-only",
+        "--confirm-production",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          DATABASE_URL: `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("PRODUCTION_DATABASE_URL");
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("Production URL resolving to Dev fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--preflight-only",
+        "--confirm-production",
+        "--project-ref",
+        PROD_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toMatch(/Dev|does not match|Production/);
+  });
+
+  it("Dev URL resolving to Production fails before DB initialization", () => {
+    const result = spawnSync(
+      process.execPath,
+      cliScriptArgs([
+        "--preflight-only",
+        "--confirm-dev",
+        "--project-ref",
+        DEV_REF,
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        encoding: "utf8",
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+      },
+    );
+    expect(result.status).not.toBe(0);
+    expect(`${result.stderr}${result.stdout}`).toMatch(/Production|does not match/);
+  });
 });
 
 describe("pilot package counts", () => {
@@ -1193,6 +1470,7 @@ describe("dry-run path remains database-free", () => {
   it("loadImportEnvironment does not require DATABASE_URL for validation-only workflows", () => {
     const env = loadImportEnvironment(ENV_ISOLATED_CWD, {});
     expect(env.databaseUrl).toBeUndefined();
+    expect(env.productionDatabaseUrl).toBeUndefined();
   });
 
   it("createPgPool refuses connection unless connect=true", () => {

@@ -6,6 +6,7 @@ import {
   ALLOWED_DEV_PROJECT_REFS,
   BLOCKED_PRODUCTION_PROJECT_REFS,
   DOCUMENTED_DEV_PROJECT_REF,
+  DOCUMENTED_PRODUCTION_PROJECT_REF,
   PILOT_EXPECTED_COUNTS,
 } from "./import-config";
 import { loadImportEnvironment } from "./import-env";
@@ -42,13 +43,14 @@ import { getPackageRows } from "./import-package";
 import type { ContentPackage } from "./import-package";
 
 const DEV_REF = DOCUMENTED_DEV_PROJECT_REF;
-const PROD_REF = "rpykfrvcynpwmbkogiou";
+const PROD_REF = DOCUMENTED_PRODUCTION_PROJECT_REF;
 const THIRD_REF = "abcdefghijklmnopqr";
 const ENV_ISOLATED_CWD = path.join(process.cwd(), "data/fixtures/valid/minimal");
 
 function envWithoutDatabaseCredentials(): NodeJS.ProcessEnv {
   const env = { ...process.env };
   delete env.DATABASE_URL;
+  delete env.PRODUCTION_DATABASE_URL;
   delete env.NEXT_PUBLIC_SUPABASE_URL;
   return env;
 }
@@ -522,6 +524,143 @@ describe("promote CLI guards", () => {
   });
 });
 
+describe("promote Production guards (pre-connection)", () => {
+  const prodUrl = `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`;
+  const devUrl = `postgresql://postgres.${DEV_REF}@db.${DEV_REF}.supabase.co:5432/postgres`;
+
+  it("accepts Production preflight with Production confirmation", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--dir",
+      "data/pilot/entry",
+      "--target-status",
+      "in_review",
+      "--preflight-only",
+      "--confirm-production",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.target).toBe("production");
+      expect(result.connectionString).toBe(prodUrl);
+    }
+  });
+
+  it("Production preflight without Production confirmation is rejected", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "in_review",
+      "--preflight-only",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-production");
+  });
+
+  it("Production execute without Production confirmation is rejected", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "in_review",
+      "--execute",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-production");
+  });
+
+  it("--confirm-dev does not authorize Production promotion", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "in_review",
+      "--execute",
+      "--confirm-dev",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const guard = validatePromoteGuards(options, {
+      databaseUrl: prodUrl,
+      productionDatabaseUrl: prodUrl,
+    });
+    expect(guard.ok).toBe(true);
+    if (!guard.ok) return;
+    expect(guard.target).toBe("dev");
+    const identity = validateProjectRefTarget({
+      databaseUrl: guard.connectionString,
+      expectedProjectRef: PROD_REF,
+      target: guard.target,
+    });
+    expect(identity.ok).toBe(false);
+  });
+
+  it("Production publish execute without --confirm-publish is rejected", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "published",
+      "--execute",
+      "--confirm-production",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, { productionDatabaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("--confirm-publish");
+  });
+
+  it("Production publish execute requires Production confirmation, project ref, and --confirm-publish", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "published",
+      "--execute",
+      "--confirm-production",
+      "--confirm-publish",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, {
+      databaseUrl: devUrl,
+      productionDatabaseUrl: prodUrl,
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.target).toBe("production");
+      expect(result.connectionString).toBe(prodUrl);
+    }
+  });
+
+  it("missing PRODUCTION_DATABASE_URL is rejected even when DATABASE_URL is set", () => {
+    const options = parsePromoteArgs([
+      "node",
+      "promote-cli.ts",
+      "--target-status",
+      "in_review",
+      "--preflight-only",
+      "--confirm-production",
+      "--project-ref",
+      PROD_REF,
+    ]);
+    const result = validatePromoteGuards(options, { databaseUrl: prodUrl });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toContain("PRODUCTION_DATABASE_URL");
+  });
+});
+
 describe("promote transition rules", () => {
   it("allows draft -> in_review", () => {
     expect(PROMOTE_TRANSITIONS.in_review).toEqual({
@@ -852,6 +991,7 @@ describe("promote environment isolation", () => {
   it("tests cannot inherit real DATABASE_URL accidentally from isolated cwd", () => {
     const env = loadImportEnvironment(ENV_ISOLATED_CWD, {});
     expect(env.databaseUrl).toBeUndefined();
+    expect(env.productionDatabaseUrl).toBeUndefined();
   });
 
   it("createPgPool without connect=true throws (no real connection in tests)", () => {
@@ -951,6 +1091,90 @@ describe("promote-cli safety (no credentials)", () => {
     );
     expect(result.status).not.toBe(0);
     expect(`${result.stderr}${result.stdout}`).toMatch(/Production|allowlist/i);
+  });
+
+  it("Production preflight without --confirm-production fails before DB", () => {
+    const result = spawnSync(
+      process.execPath,
+      promoteScriptArgs([
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+        "--target-status",
+        "in_review",
+        "--preflight-only",
+        "--project-ref",
+        PROD_REF,
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+        encoding: "utf8",
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("--confirm-production");
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("Production promotion with --confirm-dev only fails before DB", () => {
+    const result = spawnSync(
+      process.execPath,
+      promoteScriptArgs([
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+        "--target-status",
+        "in_review",
+        "--execute",
+        "--confirm-dev",
+        "--project-ref",
+        PROD_REF,
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+        encoding: "utf8",
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toMatch(/Production|blocked/i);
+    expect(output).not.toContain("WRITE CONFIRMATION");
+  });
+
+  it("Production publish execute without --confirm-publish fails before DB", () => {
+    const result = spawnSync(
+      process.execPath,
+      promoteScriptArgs([
+        "--dir",
+        path.join(process.cwd(), "data/pilot/entry"),
+        "--target-status",
+        "published",
+        "--execute",
+        "--confirm-production",
+        "--project-ref",
+        PROD_REF,
+      ]),
+      {
+        cwd: ENV_ISOLATED_CWD,
+        env: {
+          ...envWithoutDatabaseCredentials(),
+          PRODUCTION_DATABASE_URL: `postgresql://postgres.${PROD_REF}@db.${PROD_REF}.supabase.co:5432/postgres`,
+        },
+        encoding: "utf8",
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const output = `${result.stderr}${result.stdout}`;
+    expect(output).toContain("--confirm-publish");
+    expect(output).not.toContain("WRITE CONFIRMATION");
   });
 });
 
@@ -1174,12 +1398,30 @@ describe("promote publish confirmation", () => {
       confirmPublish: true,
     });
     expect(output).toContain("--- WRITE CONFIRMATION ---");
-    expect(output).toContain(`Target project ref: ${DEV_REF}`);
-    expect(output).toContain("Transition: in_review -> published");
+    expect(output).toContain("TARGET: DEV");
+    expect(output).toContain(`Project ref: ${DEV_REF}`);
+    expect(output).toContain("Operation: in_review→published");
     expect(output).toContain(`Pilot entries: ${PILOT_EXPECTED_COUNTS.entries}`);
     expect(output).toContain(`Pilot examples: ${PILOT_EXPECTED_COUNTS.examples}`);
+    expect(output).toContain("Explicit Production confirmation: NO");
     expect(output).toContain("Explicit publish confirmation: YES");
     expect(output).not.toMatch(/DATABASE_URL|password|postgresql/i);
+  });
+
+  it("formatWriteConfirmation shows Production publish gates", () => {
+    const output = formatWriteConfirmation({
+      projectRef: PROD_REF,
+      targetStatus: "published",
+      confirmPublish: true,
+      target: "production",
+      confirmProduction: true,
+    });
+    expect(output).toContain("TARGET: PRODUCTION");
+    expect(output).toContain(`Project ref: ${PROD_REF}`);
+    expect(output).toContain("Operation: in_review→published");
+    expect(output).toContain("Explicit Production confirmation: YES");
+    expect(output).toContain("Explicit publish confirmation: YES");
+    expect(output).not.toMatch(/DATABASE_URL|password|postgresql|service.role|publishable/i);
   });
 });
 
