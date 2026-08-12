@@ -2,19 +2,21 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { moduleRoutes } from "@/lib/constants/navigation";
+import { withPreservedSearchQuery } from "@/lib/search/search-query";
 import type { SearchMatchReason, SearchModule, SearchResultItem } from "@/lib/types/search";
 
 type SearchResultCardProps = {
   item: SearchResultItem;
   matchLabels: Record<SearchMatchReason, string>;
+  query?: string;
 };
 
-export function SearchResultCard({ item, matchLabels }: SearchResultCardProps) {
+export function SearchResultCard({ item, matchLabels, query }: SearchResultCardProps) {
   const primaryMatch = item.matches[0];
 
   return (
     <Link
-      href={item.href}
+      href={withPreservedSearchQuery(item.href, query)}
       className="block rounded-xl border border-border/80 bg-card p-4 transition-shadow hover:shadow-sm"
     >
       <p className="font-medium text-foreground">{item.title}</p>
@@ -36,6 +38,7 @@ type SearchResultGroupSectionProps = {
   count: number;
   items: SearchResultItem[];
   matchLabels: Record<SearchMatchReason, string>;
+  query?: string;
 };
 
 export function SearchResultGroupSection({
@@ -43,6 +46,7 @@ export function SearchResultGroupSection({
   count,
   items,
   matchLabels,
+  query,
 }: SearchResultGroupSectionProps) {
   return (
     <section className="space-y-3">
@@ -53,7 +57,7 @@ export function SearchResultGroupSection({
       <ul className="grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
           <li key={item.id}>
-            <SearchResultCard item={item} matchLabels={matchLabels} />
+            <SearchResultCard item={item} matchLabels={matchLabels} query={query} />
           </li>
         ))}
       </ul>

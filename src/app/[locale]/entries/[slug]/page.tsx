@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { LocalizedText } from "@/components/content/localized-text";
 import { PageHeader } from "@/components/layout/page-header";
+import { BackToSearchLink } from "@/components/search/back-to-search-link";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/lib/constants/locales";
 import { getEntryBySlug } from "@/lib/repositories/entries";
@@ -12,6 +13,7 @@ import type { SenseDetail } from "@/lib/types/entry";
 
 type EntryPageProps = {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 };
 
 function ExampleList({
@@ -83,8 +85,9 @@ export async function generateMetadata({ params }: EntryPageProps) {
   return { title: entry.headwordKo };
 }
 
-export default async function EntryPage({ params }: EntryPageProps) {
+export default async function EntryPage({ params, searchParams }: EntryPageProps) {
   const { locale, slug } = await params;
+  const { q } = await searchParams;
   const entry = await getEntryBySlug(slug, locale as Locale);
 
   if (!entry) notFound();
@@ -101,6 +104,7 @@ export default async function EntryPage({ params }: EntryPageProps) {
       <PageHeader
         title={entry.headwordKo}
         description={`${entry.partOfSpeech} · ${entry.pronunciation}`}
+        leading={<BackToSearchLink query={q} />}
       />
       <div className="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
         {multiSense ? (

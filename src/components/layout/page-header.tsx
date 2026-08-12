@@ -1,12 +1,16 @@
+import type { ReactNode } from "react";
+
 type PageHeaderProps = {
   title: string;
   description?: string;
+  leading?: ReactNode;
 };
 
-export function PageHeader({ title, description }: PageHeaderProps) {
+export function PageHeader({ title, description, leading }: PageHeaderProps) {
   return (
     <div className="border-b border-border/60 bg-muted/20">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+        {leading}
         <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {title}
         </h1>

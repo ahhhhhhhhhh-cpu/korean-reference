@@ -107,6 +107,7 @@ export default async function SearchPage({
                 count={group.count}
                 items={group.items}
                 matchLabels={matchLabels}
+                query={query}
               />
             ))}
           </div>

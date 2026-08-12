@@ -121,6 +121,7 @@
     "notFound": "項目が見つからないか、未公開です。"
   },
   "search": {
+    "backToSearch": "検索結果に戻る",
     "initialTitle": "全モジュール横断検索",
     "initialDescription": "韓国語見出し、漢字、意味、または収録済みの活用形を入力してください。韓国語・漢字は1文字から、その他の文字は2文字以上で検索できます。",
     "resultsFor": "「{query}」の結果 {count, plural, other {#}} 件",

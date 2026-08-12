@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Link, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/lib/constants/locales";
 import { isQuerySuggestable } from "@/lib/search/query-guard";
+import { withPreservedSearchQuery } from "@/lib/search/search-query";
 import type { SearchMatchReason, SearchModule, SearchSuggestion } from "@/lib/types/search";
 import { cn } from "@/lib/utils";
 
@@ -142,7 +143,9 @@ export function SearchBar({
 
     if (activeIndex >= 0 && suggestions[activeIndex]) {
       closeSuggestions();
-      router.push(suggestions[activeIndex].href);
+      router.push(
+        withPreservedSearchQuery(suggestions[activeIndex].href, query)
+      );
       return;
     }
 
@@ -194,7 +197,9 @@ export function SearchBar({
         if (activeIndex >= 0) {
           event.preventDefault();
           closeSuggestions();
-          router.push(suggestions[activeIndex]!.href);
+          router.push(
+            withPreservedSearchQuery(suggestions[activeIndex]!.href, query)
+          );
         }
         break;
       case "Escape":
@@ -269,7 +274,7 @@ export function SearchBar({
               aria-selected={index === activeIndex}
             >
               <Link
-                href={item.href}
+                href={withPreservedSearchQuery(item.href, query)}
                 onClick={closeSuggestions}
                 className={cn(
                   "block px-4 py-3 transition-colors hover:bg-muted/60",

@@ -121,6 +121,7 @@
     "notFound": "The requested item was not found or is not published."
   },
   "search": {
+    "backToSearch": "Back to Search",
     "initialTitle": "Search across all modules",
     "initialDescription": "Enter a Korean headword, Hanja character, meaning, or conjugated form. Korean and Hanja queries work from one character; other scripts need at least two.",
     "resultsFor": "{count, plural, one {# result} other {# results}} for \"{query}\"",
