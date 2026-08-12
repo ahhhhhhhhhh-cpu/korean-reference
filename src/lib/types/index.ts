@@ -12,7 +12,7 @@ export type {
 
 export { isPublished } from "@/lib/types/common";
 
-export type { Entry, EntryDetail, EntrySummary } from "@/lib/types/entry";
+export type { Entry, EntryDetail, EntrySummary, SenseDetail } from "@/lib/types/entry";
 export type { Example, ExampleDetail } from "@/lib/types/example";
 export type {
   ConjugationFormKey,

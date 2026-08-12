@@ -49,7 +49,7 @@ function buildEntryDocuments(bundles: EntryBundle[]): SearchDocument[] {
           ? [bundle.entry.pronunciation_romanization]
           : undefined,
       }),
-      ...definitionFields(bundle.senseTranslations),
+      ...definitionFields(bundle.senses.flatMap((item) => item.translations)),
     ];
 
     if (bundle.hanjaText) {

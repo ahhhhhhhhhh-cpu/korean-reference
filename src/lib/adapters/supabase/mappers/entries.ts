@@ -12,7 +12,7 @@ import {
   toLocale,
 } from "@/lib/adapters/supabase/mappers/translations";
 import { localize, translationsByLocale } from "@/lib/i18n/localize";
-import type { Entry, EntryDetail, EntrySummary } from "@/lib/types/entry";
+import type { Entry, EntryDetail, EntrySummary, SenseDetail } from "@/lib/types/entry";
 import type { ExampleDetail } from "@/lib/types/example";
 
 type EntryRow = Database["public"]["Tables"]["entries"]["Row"];
@@ -27,15 +27,20 @@ type ExampleTranslationRow =
 
 export type EntryExampleLink = {
   entryId: string;
+  senseId: string | null;
   displayOrder: number;
   example: ExampleRow;
   exampleTranslations: ExampleTranslationRow[];
 };
 
+export type EntrySenseBundle = {
+  sense: SenseRow;
+  translations: SenseTranslationRow[];
+};
+
 export type EntryBundle = {
   entry: EntryRow;
-  primarySense: SenseRow | null;
-  senseTranslations: SenseTranslationRow[];
+  senses: EntrySenseBundle[];
   entryTranslations: EntryTranslationRow[];
   examples: EntryExampleLink[];
   hanjaText: string | null;
@@ -88,34 +93,14 @@ export function mapEntryBase(bundle: EntryBundle): Entry {
   };
 }
 
-function primarySenseTranslations(bundle: EntryBundle): SenseTranslationRow[] {
-  if (!bundle.primarySense) return [];
-  return filterPublishedTranslationRows(
-    bundle.senseTranslations.filter(
-      (row) => row.sense_id === bundle.primarySense!.id
-    )
-  );
-}
-
 function definitionFromSense(row: SenseTranslationRow): string {
   return row.short_definition ?? row.definition ?? "";
 }
 
-export function mapEntrySummary(bundle: EntryBundle, locale: Locale): EntrySummary {
-  const base = mapEntryBase(bundle);
-  const translations = primarySenseTranslations(bundle);
-
-  return {
-    id: base.id,
-    slug: base.slug,
-    headwordKo: base.headwordKo,
-    partOfSpeech: base.partOfSpeech,
-    pronunciation: base.pronunciation,
-    romanization: base.romanization,
-    irregularType: base.irregularType,
-    hanjaText: base.hanjaText,
-    definition: pickLocalized(translations, locale, definitionFromSense),
-  };
+function primarySenseBundle(bundle: EntryBundle): EntrySenseBundle | null {
+  return (
+    bundle.senses.find((item) => item.sense.is_primary) ?? bundle.senses[0] ?? null
+  );
 }
 
 function mapExample(
@@ -141,19 +126,74 @@ function mapExample(
   };
 }
 
+function mapExamplesForLinks(
+  links: EntryExampleLink[],
+  locale: Locale
+): ExampleDetail[] {
+  return links
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .map((link) => mapExample(link, locale))
+    .filter((item): item is ExampleDetail => item !== null);
+}
+
+function mapSenseDetail(
+  senseBundle: EntrySenseBundle,
+  examples: EntryExampleLink[],
+  locale: Locale
+): SenseDetail {
+  const translations = filterPublishedTranslationRows(senseBundle.translations);
+  const senseExamples = examples.filter(
+    (link) => link.senseId === senseBundle.sense.id
+  );
+
+  return {
+    senseOrder: senseBundle.sense.sense_order,
+    isPrimary: senseBundle.sense.is_primary,
+    definition: pickLocalized(translations, locale, definitionFromSense),
+    usageNotes: pickLocalized(
+      translations,
+      locale,
+      (row) => row.usage_note ?? null
+    ),
+    examples: mapExamplesForLinks(senseExamples, locale),
+  };
+}
+
+export function mapEntrySummary(bundle: EntryBundle, locale: Locale): EntrySummary {
+  const base = mapEntryBase(bundle);
+  const primary = primarySenseBundle(bundle);
+
+  return {
+    id: base.id,
+    slug: base.slug,
+    headwordKo: base.headwordKo,
+    partOfSpeech: base.partOfSpeech,
+    pronunciation: base.pronunciation,
+    romanization: base.romanization,
+    irregularType: base.irregularType,
+    hanjaText: base.hanjaText,
+    definition: primary
+      ? pickLocalized(
+          filterPublishedTranslationRows(primary.translations),
+          locale,
+          definitionFromSense
+        )
+      : localize({ en: "", zh: "", ja: "" }, locale),
+  };
+}
+
 export function mapEntryDetail(bundle: EntryBundle, locale: Locale): EntryDetail {
   const base = mapEntryBase(bundle);
-  const senseTranslations = primarySenseTranslations(bundle);
   const entryTranslations = filterPublishedTranslationRows(bundle.entryTranslations);
-
-  const senseByLocale = <V>(pick: (item: SenseTranslationRow) => V) =>
-    translationsByLocale(
-      senseTranslations.flatMap((row) => {
-        const resolved = toLocale(row.locale);
-        return resolved ? [{ ...row, locale: resolved }] : [];
-      }),
-      pick
-    );
+  const publishedSenses = bundle.senses.filter(
+    (item) => item.sense.status === "published"
+  );
+  const primary = publishedSenses.find((item) => item.sense.is_primary) ??
+    publishedSenses[0] ??
+    null;
+  const senses = publishedSenses.map((senseBundle) =>
+    mapSenseDetail(senseBundle, bundle.examples, locale)
+  );
 
   const entryByLocale = <V>(pick: (item: EntryTranslationRow) => V) =>
     translationsByLocale(
@@ -164,19 +204,29 @@ export function mapEntryDetail(bundle: EntryBundle, locale: Locale): EntryDetail
       pick
     );
 
-  const examples = bundle.examples
-    .sort((a, b) => a.displayOrder - b.displayOrder)
-    .map((link) => mapExample(link, locale))
-    .filter((item): item is ExampleDetail => item !== null);
+  const entryLevelExamples = mapExamplesForLinks(
+    bundle.examples.filter((link) => link.senseId === null),
+    locale
+  );
 
   return {
     ...base,
-    definition: localize(senseByLocale(definitionFromSense), locale),
+    definition: primary
+      ? pickLocalized(
+          filterPublishedTranslationRows(primary.translations),
+          locale,
+          definitionFromSense
+        )
+      : localize({ en: "", zh: "", ja: "" }, locale),
+    senses,
     notes: localize(entryByLocale((row) => row.general_note ?? null), locale),
-    usageNotes: localize(
-      senseByLocale((row) => row.usage_note ?? null),
-      locale
-    ),
-    examples,
+    usageNotes: primary
+      ? pickLocalized(
+          filterPublishedTranslationRows(primary.translations),
+          locale,
+          (row) => row.usage_note ?? null
+        )
+      : localize({ en: null, zh: null, ja: null }, locale),
+    examples: entryLevelExamples,
   };
 }

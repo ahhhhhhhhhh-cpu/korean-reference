@@ -53,47 +53,51 @@ const entryBundle: EntryBundle = {
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-01-01T00:00:00Z",
   },
-  primarySense: {
-    id: "sense-1",
-    entry_id: "entry-1",
-    sense_order: 1,
-    is_primary: true,
-    register: "neutral",
-    status: "published",
-    import_key: null,
-    archived_at: null,
-    published_at: null,
-    created_at: "2026-01-01T00:00:00Z",
-    updated_at: "2026-01-01T00:00:00Z",
-  },
-  senseTranslations: [
+  senses: [
     {
-      id: "st-en",
-      sense_id: "sense-1",
-      locale: "en",
-      short_definition: "to go",
-      definition: "To move from one place to another.",
-      usage_note: "Common daily verb.",
-      nuance_note: null,
-      status: "published",
-      import_key: null,
-      published_at: null,
-      created_at: "2026-01-01T00:00:00Z",
-      updated_at: "2026-01-01T00:00:00Z",
-    },
-    {
-      id: "st-zh-draft",
-      sense_id: "sense-1",
-      locale: "zh",
-      short_definition: "去",
-      definition: "draft only",
-      usage_note: null,
-      nuance_note: null,
-      status: "draft",
-      import_key: null,
-      published_at: null,
-      created_at: "2026-01-01T00:00:00Z",
-      updated_at: "2026-01-01T00:00:00Z",
+      sense: {
+        id: "sense-1",
+        entry_id: "entry-1",
+        sense_order: 1,
+        is_primary: true,
+        register: "neutral",
+        status: "published",
+        import_key: null,
+        archived_at: null,
+        published_at: null,
+        created_at: "2026-01-01T00:00:00Z",
+        updated_at: "2026-01-01T00:00:00Z",
+      },
+      translations: [
+        {
+          id: "st-en",
+          sense_id: "sense-1",
+          locale: "en",
+          short_definition: "to go",
+          definition: "To move from one place to another.",
+          usage_note: "Common daily verb.",
+          nuance_note: null,
+          status: "published",
+          import_key: null,
+          published_at: null,
+          created_at: "2026-01-01T00:00:00Z",
+          updated_at: "2026-01-01T00:00:00Z",
+        },
+        {
+          id: "st-zh-draft",
+          sense_id: "sense-1",
+          locale: "zh",
+          short_definition: "去",
+          definition: "draft only",
+          usage_note: null,
+          nuance_note: null,
+          status: "draft",
+          import_key: null,
+          published_at: null,
+          created_at: "2026-01-01T00:00:00Z",
+          updated_at: "2026-01-01T00:00:00Z",
+        },
+      ],
     },
   ],
   entryTranslations: [
@@ -426,14 +430,14 @@ describe("Supabase mappers (Phase 6C)", () => {
   });
 
   it("filters unpublished translation rows", () => {
-    const published = filterPublishedTranslationRows(entryBundle.senseTranslations);
+    const published = filterPublishedTranslationRows(entryBundle.senses[0]!.translations);
     expect(published).toHaveLength(1);
     expect(published[0]?.locale).toBe("en");
   });
 
   it("localizes with fallback through pickLocalized", () => {
     const localized = pickLocalized(
-      entryBundle.senseTranslations,
+      entryBundle.senses[0]!.translations,
       "ja",
       (row) => row.short_definition ?? row.definition ?? ""
     );

@@ -61,12 +61,24 @@ function mapEntryDetail(entry: (typeof mockEntries)[number], locale: Locale): En
     .map((item) => mapExample(item.id, locale))
     .filter((item): item is ExampleDetail => item !== null);
 
+  const definition = localize(byLocale((item) => item.definition), locale);
+  const usageNotes = localize(byLocale((item) => item.usageNotes ?? null), locale);
+
   return {
     ...entry,
-    definition: localize(byLocale((item) => item.definition), locale),
+    definition,
+    senses: [
+      {
+        senseOrder: 1,
+        isPrimary: true,
+        definition,
+        usageNotes,
+        examples,
+      },
+    ],
     notes: localize(byLocale((item) => item.notes ?? null), locale),
-    usageNotes: localize(byLocale((item) => item.usageNotes ?? null), locale),
-    examples,
+    usageNotes,
+    examples: [],
   };
 }
 

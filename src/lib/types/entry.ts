@@ -7,6 +7,14 @@ import type { PublicationStatus } from "@/lib/constants/publication-status";
 import type { LocalizedContent, RomanizationFields, Timestamps } from "@/lib/types/common";
 import type { ExampleDetail } from "@/lib/types/example";
 
+export type SenseDetail = {
+  senseOrder: number;
+  isPrimary: boolean;
+  definition: LocalizedContent<string>;
+  usageNotes: LocalizedContent<string | null>;
+  examples: ExampleDetail[];
+};
+
 export type Entry = Timestamps &
   RomanizationFields & {
   id: string;
@@ -27,9 +35,13 @@ export type Entry = Timestamps &
 };
 
 export type EntryDetail = Entry & {
+  /** Primary sense definition (search/metadata compatibility). */
   definition: LocalizedContent<string>;
+  senses: SenseDetail[];
   notes: LocalizedContent<string | null>;
+  /** Primary sense usage notes (search/metadata compatibility). */
   usageNotes: LocalizedContent<string | null>;
+  /** Entry-level examples not linked to a specific sense. */
   examples: ExampleDetail[];
 };
 
